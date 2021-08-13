@@ -2,18 +2,12 @@ if &compatible
     set nocompatible               " Be iMproved
 endif
 
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
 " Disable HTML polyglot due to dodgy inline-js indents
 let g:polyglot_disabled = ['html'] " breaks java
 
 call plug#begin('~/.vim/plugged')
 
-
+set updatetime=300
 
 " Autocompletion - CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -24,6 +18,10 @@ Plug 'vim-airline/vim-airline-themes'
 
 " Colourscheme
 Plug 'ayu-theme/ayu-vim'
+" Plug 'folke/tokyonight.nvim'
+
+" Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
+" Vim Script
 
 " Git
 Plug 'tpope/vim-fugitive' " Wrapper
@@ -42,6 +40,10 @@ Plug 'mhinz/vim-startify'
 
 " Icons
 Plug 'ryanoasis/vim-devicons'
+Plug 'kyazdani42/nvim-web-devicons'
+
+" Better top bar
+" Plug 'romgrk/barbar.nvim'
 
 " Colour code highlighting
 Plug 'ap/vim-css-color'
@@ -52,11 +54,17 @@ Plug 'junegunn/goyo.vim'
 Plug 'honza/vim-snippets'
 Plug 'SirVer/ultisnips'
 
+" Todo highlighting
+Plug 'nvim-lua/plenary.nvim'
+Plug 'folke/todo-comments.nvim'
 " Pairs-closing
 " Plug 'jiangmiao/auto-pairs'
 
 " Fuzzy finder
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'fannheyward/telescope-coc.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+" Plug 'ctrlpvim/ctrlp.vim'
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 
 " Ron highlighting
 Plug 'ron-rs/ron.vim'
@@ -97,13 +105,14 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
 
-let g:airline_left_sep =  "\uE0BC "
-let g:airline_left_alt_sep = "\uE0BD "
+let g:airline_left_sep =  "\uE0B8"
+let g:airline_left_alt_sep = "\uE0B9"
 
-let g:airline_right_sep = "\uE0BE "
-let g:airline_right_alt_sep = "\uE0BF "
+let g:airline_right_sep = "\uE0BA"
+let g:airline_right_alt_sep = "\uE0BB"
 
 let g:airline_theme='ayu_mirage'
+" let g:airline_theme = "tokyonight"
 
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 " Snippets
@@ -128,8 +137,12 @@ endfunction
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 nnoremap <Leader>p :CocCommand<CR>
+nnoremap <Leader>t :Telescope<CR>
 
 nnoremap <Leader><Leader> :CocAction<CR>
+
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " ---
 nmap <Leader>rn <Plug>(coc-rename)
@@ -187,7 +200,8 @@ let g:ale_floating_window_border = ['║', '═', '╔', '╗', '╝', '╚']
 let g:ale_linters = {
     \ 'python': [],
     \ 'haskell': [],
-    \ 'rust': [] 
+    \ 'rust': [],
+    \ 'typescript': []
     \}
 " 'cargo', 'rls']
 " let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
@@ -206,12 +220,14 @@ let g:ale_rust_rls_toolchain = 'stable'
 " let g:ale_lint_on_insert_leave = 0
 
 " Django
-set wildignore +=*/staticfiles/*
+set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
 " Colour Scheme
 set termguicolors
 let ayucolor="mirage"
 colorscheme ayu
+" let g:tokyonight_style = 'light'
+" colorscheme tokyonight
 
 " Gutter marks
 highlight SignatureMarkText guifg=#5CCFE6
@@ -252,7 +268,7 @@ set cursorline " Make cursor easier to find
 
 nnoremap <del> "_x " Make the delete button not yank
 
-set noequalalways " Disable equalalways so splits aren't resized to be equal when another split is made
+" set noequalalways " Disable equalalways so splits aren't resized to be equal when another split is made
 
 " Custom filetype stuff
 autocmd BufNewFile,BufRead *.pw set filetype=pw
@@ -279,3 +295,23 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+
+" Fuzzy finder
+if executable('fish')
+    " use fish for embedded terminals
+    set shell=fish
+    " use bash for else
+    let $SHELL = 'bash'
+endif
+
+nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
+" let g:fzf_preview_default_fzf_options = { '--reverse': v:true, '--preview-window': 'nowrap' }
+" let g:fzf_preview_use_dev_icons = 1
+
+
+lua << EOF
+  require("todo-comments").setup {
+  }
+EOF
+
+lua require('telescope').load_extension('coc')
