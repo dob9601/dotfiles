@@ -6,7 +6,7 @@
     "python.linting.pylintUseMinimalCheckers": false,
     "python.typeshedPaths": "/home/dob9601/repos2/typeshed",
     "coc.preferences.jumpCommand": "tab drop",
-    "clangd.path": "/home/dob9601/.config/coc/extensions/coc-clangd-data/install/11.0.0/clangd_11.0.0/bin/clangd",
+    "clangd.path": "/home/dob9601/.config/coc/extensions/coc-clangd-data/install/12.0.0/clangd_12.0.0/bin/clangd",
     "cSpell.userWords": [
         "philmnight"
     ],
@@ -22,16 +22,26 @@
     "java.configuration.runtimes": [
         {
             "name": "JavaSE-1.8",
-            "path": "/lib/jvm/java-8-openjdk",
+            "path": "/lib/jvm/java-8-openjdk"
         },
         {
             "name": "JavaSE-11",
-            "path": "/lib/jvm/java-11-openjdk",
+            "path": "/lib/jvm/java-11-openjdk"
         },
         {
             "name": "JavaSE-15",
             "path": "/lib/jvm/java-15-openjdk",
             "default": true
-        },
-    ]
+        }
+    ],
+    "diagnostic.locationlistUpdate": true,
+    "diagnostic.refreshOnInsertMode": true,
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextCurrentLineOnly": false,
+    "diagnostic.virtualTextPrefix": "-> ",
+    "diagnostic.messageTarget": "echo",
+    "diagnostic.hintSign": "",
+    "diagnostic.infoSign": "",
+    "diagnostic.warningSign": "",
+    "diagnostic.errorSign": ""
 }
