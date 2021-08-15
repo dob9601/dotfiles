@@ -13,19 +13,17 @@ set updatetime=300
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Statusbar
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'hoob3rt/lualine.nvim'
 
 " Colourscheme
-Plug 'ayu-theme/ayu-vim'
-" Plug 'folke/tokyonight.nvim'
+Plug 'folke/tokyonight.nvim'
 
 " Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
-" Vim Script
+Plug 'folke/trouble.nvim'
 
 " Git
 Plug 'tpope/vim-fugitive' " Wrapper
-Plug 'airblade/vim-gitgutter' " Git in gutter
+Plug 'mhinz/vim-signify'
 Plug 'tveskag/nvim-blame-line' " Git blame
 
 " Improved syntax
@@ -100,25 +98,10 @@ let g:python3_host_prog = '/usr/bin/python'
 
 " Plugin Config -----------
 
-" Airline
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_buffers = 0
-
-let g:airline_left_sep =  "\uE0B8"
-let g:airline_left_alt_sep = "\uE0B9"
-
-let g:airline_right_sep = "\uE0BA"
-let g:airline_right_alt_sep = "\uE0BB"
-
-let g:airline_theme='ayu_mirage'
-" let g:airline_theme = "tokyonight"
-
-let g:airline#extensions#tabline#formatter = 'unique_tail'
 " Snippets
 let g:UltiSnipsExpandTrigger="<nop>"
 
-" Coc
+" --------------------   Coc    --------------------
 inoremap <silent><expr> <c-space> coc#refresh()
 " Tab stuff
 inoremap <silent><expr> <TAB>
@@ -149,12 +132,12 @@ nmap <Leader>rn <Plug>(coc-rename)
 nmap <silent>gd <Plug>(coc-definition)
 nmap <silent>gr <Plug>(coc-references)
 
-" Git
+" --------------------    Git   --------------------
 nnoremap ga :Git add %<CR>
 nnoremap gc :Git commit<CR>
 nnoremap gs :Git status<CR>
 
-" Startify
+" -------------------- Startify --------------------
 let g:startify_custom_header = [
             \ '     █████████ ██████████ ██████████ ███    ███ ███ ███████████████',
             \ '     ███▀▀▀███ ███    ███ ███    ███ ███    ███ ███ ███▀▀▀███▀▀▀███',
@@ -192,7 +175,8 @@ let g:startify_lists = [
         \ { 'type': 'commands',  'header': ['   Commands']       },
         \ ]
 
-" Ale
+"--------------------   Ale  -------------------- 
+" let g:ale_disable_lsp = 1
 let g:ale_echo_cursor= 0
 let g:ale_cursor_detail=1
 let g:ale_floating_preview = 1
@@ -203,44 +187,18 @@ let g:ale_linters = {
     \ 'rust': [],
     \ 'typescript': []
     \}
-" 'cargo', 'rls']
-" let g:ale_rust_cargo_use_clippy = executable('cargo-clippy')
 let g:ale_rust_rls_toolchain = 'stable'
-
-" let g:ale_open_list = 0
-" let g:ale_set_quickfix = 0
-" let g:ale_virtualtext_cursor = 1
-" let g:ale_virtualtext_prefix = '| '
-" let g:ale_echo_cursor = 0
-" let g:ale_enabled = 0
-
-" let g:ale_lint_on_text_changed = 0
-" let g:ale_lint_on_enter = 1
-" let g:ale_lint_on_save = 1
-" let g:ale_lint_on_insert_leave = 0
 
 " Django
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
 " Colour Scheme
 set termguicolors
-let ayucolor="mirage"
-colorscheme ayu
-" let g:tokyonight_style = 'light'
-" colorscheme tokyonight
+let g:tokyonight_style = 'storm'
+colorscheme tokyonight
 
 " Gutter marks
 highlight SignatureMarkText guifg=#5CCFE6
-
-" Split handling
-nnoremap <silent> <A-Left> <C-w>h
-nnoremap <silent> <A-Down> <C-w>j
-nnoremap <silent> <A-Up> <C-w>k
-nnoremap <silent> <A-Right> <C-w>l
-inoremap <silent> <A-Left> <C-O><C-w>h
-inoremap <silent> <A-Down> <C-O><C-w>j
-inoremap <silent> <A-Up> <C-O><C-w>k
-inoremap <silent> <A-Right> <C-O><C-w>l
 
 " Move cursor to new split
 set splitright
@@ -253,6 +211,7 @@ set number " Show line numbers
 
 autocmd BufRead,BufNewFile * setlocal signcolumn=yes " Enable signcolumn by default
 highlight clear SignColumn " Clear highlight from sign column
+set signcolumn=number  " Merge the sign column and number column
 
 runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-s>
 
@@ -308,10 +267,79 @@ nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
 " let g:fzf_preview_default_fzf_options = { '--reverse': v:true, '--preview-window': 'nowrap' }
 " let g:fzf_preview_use_dev_icons = 1
 
-
 lua << EOF
-  require("todo-comments").setup {
-  }
-EOF
+require('lualine').setup({
+    options = {
+        theme = 'tokyonight'
+    },
+    tabline = {
+        lualine_a = {'hostname'},
+        lualine_b = {'branch'},
+        lualine_c = {'filename'},
+        lualine_x = {'diff'},
+        lualine_y = {},
+        lualine_z = {}
+    },
 
-lua require('telescope').load_extension('coc')
+    sections = {
+        lualine_a = {'mode'},
+        lualine_b = {'branch',
+                        { 'diagnostics', sources = {'coc', 'ale'} }
+                    },
+        lualine_c = {'g:coc_status', 'filename'},
+        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_y = {'progress'},
+        lualine_z = {'location'}
+    },
+
+    extensions = {'fugitive'}
+})
+
+require("trouble").setup {
+    height = 10, -- height of the trouble list
+    icons = true, -- use devicons for filenames
+    mode = "loclist", -- "lsp_workspace_diagnostics", "lsp_document_diagnostics", "quickfix", "lsp_references", "loclist"
+    fold_open = "", -- icon used for open folds
+    fold_closed = "", -- icon used for closed folds
+    action_keys = { -- key mappings for actions in the trouble list
+        close = "q", -- close the list
+        cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
+        refresh = "r", -- manually refresh
+        jump = {"<cr>", "<tab>"}, -- jump to the diagnostic or open / close folds
+        jump_close = {"o"}, -- jump to the diagnostic and close the list
+        toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
+        toggle_preview = "P", -- toggle auto_preview
+        hover = "K", -- opens a small poup with the full multiline message
+        preview = "p", -- preview the diagnostic location
+        close_folds = {"zM", "zm"}, -- close all folds
+        open_folds = {"zR", "zr"}, -- open all folds
+        toggle_fold = {"zA", "za"}, -- toggle fold of current file
+        previous = "k", -- preview item
+        next = "j" -- next item
+    },
+    indent_lines = false, -- add an indent guide below the fold icons
+    auto_open = false, -- automatically open the list when you have diagnostics
+    auto_close = false, -- automatically close the list when you have no diagnostics
+    auto_preview = true, -- automatyically preview the location of the diagnostic. <esc> to close preview and go back to last window
+    auto_fold = false, -- automatically fold a file trouble list at creation
+    signs = {
+        -- icons / text used for a diagnostic
+        error = "",
+        warning = "",
+        hint = "",
+        information = "",
+        other = "﫠"
+    },
+    use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
+}
+
+require('todo-comments').setup {
+}
+
+require('telescope').setup {
+    defaults = {
+        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env' }
+    }
+}
+require('telescope').load_extension('coc')
+EOF
