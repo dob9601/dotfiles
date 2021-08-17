@@ -209,9 +209,8 @@ set splitbelow
 set nowrap " Disable text-wrap
 set number " Show line numbers
 
-autocmd BufRead,BufNewFile * setlocal signcolumn=yes " Enable signcolumn by default
+autocmd BufRead,BufNewFile * setlocal signcolumn=number " Enable signcolumn by default
 highlight clear SignColumn " Clear highlight from sign column
-set signcolumn=number  " Merge the sign column and number column
 
 runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-s>
 
