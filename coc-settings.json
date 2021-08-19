@@ -34,6 +34,9 @@
             "default": true
         }
     ],
+    
+    "rust-analyzer.checkOnSave.command": "clippy"
+    
     "diagnostic.locationlistUpdate": true,
     "diagnostic.refreshOnInsertMode": true,
     "diagnostic.virtualText": true,
