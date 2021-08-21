@@ -1,3 +1,14 @@
-key:
-- Value
-- Yeet
+nvim:
+  file:
+    - init.vim
+  target:
+    - ~/.config/noovim/init.vim
+
+  commands:
+    pre_install:
+      - echo "Hi"
+      - echo "Specify several pre-copy commands here"
+
+    post_install:
+      - echo "Installation complete"
+      - echo "Have a nice day"
