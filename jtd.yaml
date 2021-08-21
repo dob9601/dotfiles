@@ -1,8 +1,6 @@
 nvim:
-  file:
-    - init.vim
-  target:
-    - ~/.config/noovim/init.vim
+  file: init.vim
+  target: ~/.config/noovim/init.vim
 
   commands:
     pre_install:
