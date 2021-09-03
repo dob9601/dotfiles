@@ -275,7 +275,13 @@ require('lualine').setup({
         lualine_a = {'hostname'},
         lualine_b = {'branch'},
         lualine_c = {'filename'},
-        lualine_x = {'diff'},
+        lualine_x = {
+            {
+                'diff',
+                symbols = {added = ' ', modified = ' ', removed = ' '},
+            }
+        },
+
         lualine_y = {},
         lualine_z = {}
     },
