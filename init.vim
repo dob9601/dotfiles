@@ -23,11 +23,15 @@ Plug 'folke/trouble.nvim'
 
 " Git
 Plug 'tpope/vim-fugitive' " Wrapper
-Plug 'mhinz/vim-signify'
-Plug 'tveskag/nvim-blame-line' " Git blame
+" Plug 'mhinz/vim-signify'
+Plug 'airblade/vim-gitgutter'
+" Plug 'tveskag/nvim-blame-line' " Git blame
 
 " Improved syntax
 Plug 'sheerun/vim-polyglot'
+
+" Commenting
+Plug 'preservim/nerdcommenter'
 
 " Ranger
 Plug 'rbgrouleff/bclose.vim'
@@ -132,7 +136,11 @@ nmap <Leader>rn <Plug>(coc-rename)
 nmap <silent>gd <Plug>(coc-definition)
 nmap <silent>gr <Plug>(coc-references)
 
-" --------------------    Git   --------------------
+" ----------------- Indent Blankline ---------------
+
+set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
+
+" ----------------------- Git ----------------------
 nnoremap ga :Git add %<CR>
 nnoremap gc :Git commit<CR>
 nnoremap gs :Git status<CR>
@@ -187,29 +195,36 @@ let g:ale_linters = {
     \ 'rust': [],
     \ 'typescript': []
     \}
-let g:ale_rust_rls_toolchain = 'stable'
 
 " Django
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
 " Colour Scheme
 set termguicolors
-let g:tokyonight_style = 'storm'
-colorscheme tokyonight
 
 " Gutter marks
-highlight SignatureMarkText guifg=#5CCFE6
+let g:gitgutter_signs=0
+let g:gitgutter_highlight_linenrs=1
+highlight GitGutterAddLineNr guifg=lightgreen
+highlight GitGutterChangeLineNr guifg=lightblue
+highlight GitGutterDeleteLineNr guifg=lightred
+highlight GitGutterChangeDeleteLineNr guifg=lightred
+
+let g:tokyonight_style = 'storm'
+colorscheme tokyonight
 
 " Move cursor to new split
 set splitright
 set splitbelow
 
 " --------------
+au BufNewFile,BufRead,BufReadPost *.html.tera set syntax=htmldjango
 
 set nowrap " Disable text-wrap
 set number " Show line numbers
 
-autocmd BufRead,BufNewFile * setlocal signcolumn=number " Enable signcolumn by default
+set signcolumn=yes:1
+" autocmd BufRead,BufNewFile * setlocal signcolumn=number " Enable signcolumn by default
 highlight clear SignColumn " Clear highlight from sign column
 
 runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-s>
@@ -254,6 +269,8 @@ function! s:show_documentation()
   endif
 endfunction
 
+let g:indentLine_char = '|'
+
 " Fuzzy finder
 if executable('fish')
     " use fish for embedded terminals
@@ -281,7 +298,6 @@ require('lualine').setup({
                 symbols = {added = ' ', modified = ' ', removed = ' '},
             }
         },
-
         lualine_y = {},
         lualine_z = {}
     },
@@ -343,8 +359,9 @@ require('todo-comments').setup {
 
 require('telescope').setup {
     defaults = {
-        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env' }
+        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' }
     }
 }
+
 require('telescope').load_extension('coc')
 EOF
