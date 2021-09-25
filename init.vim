@@ -131,10 +131,12 @@ nnoremap <Leader><Leader> :CocAction<CR>
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-" ---
 nmap <Leader>rn <Plug>(coc-rename)
 nmap <silent>gd <Plug>(coc-definition)
 nmap <silent>gr <Plug>(coc-references)
+
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " ----------------- Indent Blankline ---------------
 
@@ -360,6 +362,11 @@ require('todo-comments').setup {
 require('telescope').setup {
     defaults = {
         file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' }
+    },
+    pickers = {
+        find_files = {
+            theme = "ivy"
+        }
     }
 }
 
