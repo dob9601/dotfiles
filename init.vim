@@ -248,6 +248,8 @@ set cursorline " Make cursor easier to find
 
 nnoremap <del> "_x " Make the delete button not yank
 
+set concealcursor=""
+
 " set noequalalways " Disable equalalways so splits aren't resized to be equal when another split is made
 
 " Custom filetype stuff
