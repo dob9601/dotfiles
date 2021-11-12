@@ -18,6 +18,8 @@ Plug 'hoob3rt/lualine.nvim'
 " Colourscheme
 Plug 'folke/tokyonight.nvim'
 
+Plug 'deris/vim-shot-f'
+
 " Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
 Plug 'folke/trouble.nvim'
 
