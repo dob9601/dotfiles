@@ -34,17 +34,50 @@
             "default": true
         }
     ],
-    
-    "rust-analyzer.checkOnSave.command": "clippy"
-    
     "diagnostic.locationlistUpdate": true,
     "diagnostic.refreshOnInsertMode": true,
+    /*
     "diagnostic.virtualText": true,
+    "diagnostic.virtualTextLines": 10,
     "diagnostic.virtualTextCurrentLineOnly": false,
     "diagnostic.virtualTextPrefix": "-> ",
-    "diagnostic.messageTarget": "echo",
+    "diagnostic.messageTarget": "float",
+    */
     "diagnostic.hintSign": "",
     "diagnostic.infoSign": "",
     "diagnostic.warningSign": "",
-    "diagnostic.errorSign": ""
+    "diagnostic.errorSign": "",
+
+    "codeLens.enable": true,
+
+    "rust-analyzer.checkOnSave.command": "clippy",
+
+    "suggest.completionItemKindLabels": {
+        "method": "  ",
+        "function": "  ",
+        "variable": "[]",
+        "field": "  ",
+        "typeParameter": "<>",
+        "constant": "  ",
+        "class": " פּ ",
+        "interface": " 蘒",
+        "struct": "  ",
+        "event": "  ",
+        "operator": "  ",
+        "module": "  ",
+        "property": "  ",
+        "enum": " 練",
+        "reference": "  ",
+        "keyword": "  ",
+        "file": "  ",
+        "folder": " ﱮ ",
+        "color": "  ",
+        "unit": " 塞 ",
+        "snippet": "  ",
+        "text": "  ",
+        "constructor": "  ",
+        "value": "  ",
+        "enumMember": "  "
+    },
+    "suggest.labelMaxLength": 50
 }
