@@ -126,6 +126,7 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 nnoremap <Leader>p :CocCommand<CR>
 nnoremap <Leader>t :Telescope<CR>
+nnoremap <Leader>b :BufferPick<CR>
 
 nnoremap <Leader><Leader> :CocAction<CR>
 
@@ -389,5 +390,9 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+}
+
+vim.g.bufferline = {
+  icons = 'both'
 }
 EOF
