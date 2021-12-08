@@ -312,9 +312,14 @@ require('lualine').setup({
 
     sections = {
         lualine_a = {'mode'},
-        lualine_b = {'branch',
-                        { 'diagnostics', sources = {'coc', 'ale'} }
-                    },
+        lualine_b = {
+            'branch',
+            { 'diagnostics', sources = {'coc', 'ale'} },
+            {
+                'diff',
+                symbols = {added = ' ', modified = ' ', removed = ' '},
+            }
+        },
         lualine_c = {'g:coc_status', 'filename'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
