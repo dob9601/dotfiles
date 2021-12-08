@@ -35,10 +35,6 @@ Plug 'sheerun/vim-polyglot'
 " Commenting
 Plug 'preservim/nerdcommenter'
 
-" Ranger
-Plug 'rbgrouleff/bclose.vim'
-Plug 'francoiscabrol/ranger.vim'
-
 " Start page
 Plug 'mhinz/vim-startify'
 
@@ -56,7 +52,7 @@ Plug 'ap/vim-css-color'
 Plug 'junegunn/goyo.vim'
 
 Plug 'honza/vim-snippets'
-Plug 'SirVer/ultisnips'
+" Use coc-snippets over ultisnip to work around bug with angle brackets
 
 " Todo highlighting
 Plug 'nvim-lua/plenary.nvim'
