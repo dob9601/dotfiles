@@ -43,7 +43,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
 
 " Better top bar
-" Plug 'romgrk/barbar.nvim'
+Plug 'romgrk/barbar.nvim'
 
 " Colour code highlighting
 Plug 'ap/vim-css-color'
