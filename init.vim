@@ -296,24 +296,14 @@ require('lualine').setup({
     options = {
         theme = 'tokyonight'
     },
-    tabline = {
-        lualine_a = {'hostname'},
-        lualine_b = {'branch'},
-        lualine_c = {'filename'},
-        lualine_x = {
-            {
-                'diff',
-                symbols = {added = ' ', modified = ' ', removed = ' '},
-            }
-        },
-        lualine_y = {},
-        lualine_z = {}
-    },
 
     sections = {
         lualine_a = {'mode'},
         lualine_b = {
-            'branch',
+            {
+                'branch',
+                icon = ''
+            },
             { 'diagnostics', sources = {'coc', 'ale'} },
             {
                 'diff',
