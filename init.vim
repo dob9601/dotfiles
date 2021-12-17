@@ -148,11 +148,13 @@ set inccommand=nosplit
 set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
 
 " BarBar
+let bufferline = get(g:, 'bufferline', {})
 let bufferline.auto_hide = v:false
-nnoremap <Leader>b :BufferPick<CR>
-nnoremap <A-b>d :BufferClose<CR>
-nnoremap <A-b>p :BufferPin<CR>
-nnoremap <A-b>c :BufferCloseAllButCurrent<CR>
+nnoremap <silent><Leader>b :BufferPick<CR>
+nnoremap <silent><A-b>d :BufferClose<CR>
+nnoremap <silent><A-b>p :BufferPin<CR>
+nnoremap <silent><A-b>c :BufferCloseAllButCurrent<CR>
+
 
 
 " ----------------------- Git ----------------------
