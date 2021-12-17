@@ -147,6 +147,11 @@ set inccommand=nosplit
 
 set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
 
+" Buffers
+nnoremap <A-b>d :BufferClose<CR>
+nnoremap <A-b>p :BufferPin<CR>
+nnoremap <A-b>c :BufferCloseAllButCurrent<CR>
+
 " ----------------------- Git ----------------------
 nnoremap ga :Git add %<CR>
 nnoremap gc :Git commit<CR>
