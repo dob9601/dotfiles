@@ -1,11 +1,19 @@
 nvim:
   file: init.vim
-  target: ~/.config/noovim/init.vim
+  target: ~/.config/nvim/init.vim
 
-  pre_install:
-    - echo "Hi"
-    - echo "Specify several pre-copy commands here"
+nvim-coc:
+  file: coc-settings.json
+  target: ~/.config/nvim/coc-settings.json
 
-  post_install:
-    - echo "Installation complete"
-    - echo "Have a nice day"
+kitty:
+  file: kitty.conf
+  target: ~/.config/kitty/kitty.conf
+
+kitty-theme:
+  file: theme.conf
+  target: ~/.config/kitty/theme.conf
+
+fish:
+  file: config.fish
+  target: ~/.config/fish/config.fish
