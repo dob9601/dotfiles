@@ -1,4 +1,6 @@
 nvim:
+  pre_install:
+    - echo "Hi"
   file: init.vim
   target: ~/.config/nvim/init.vim
 
