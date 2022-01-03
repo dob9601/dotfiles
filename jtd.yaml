@@ -1,6 +1,6 @@
 nvim:
   pre_install:
-    - echo "Hi"
+    - sudo apt install nvim
   file: init.vim
   target: ~/.config/nvim/init.vim
 
