@@ -1,6 +1,6 @@
 nvim:
   pre_install:
-    - sudo apt install nvim
+    - sudo apt install lolcat
   file: init.vim
   target: ~/.config/nvim/init.vim
 
