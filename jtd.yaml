@@ -1,6 +1,9 @@
 nvim:
   pre_install:
     - sudo apt install lolcat
+    - echo "foo"
+    - echo "bar"
+    - echo "baz"
   file: init.vim
   target: ~/.config/nvim/init.vim
 
