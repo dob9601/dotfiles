@@ -98,6 +98,8 @@ call plug#end()
 " Required:
 filetype plugin indent on
 autocmd BufNewFile,BufRead *.cwl set filetype=cwl
+autocmd BufNewFile,BufRead *.cwl set syntax=yaml
+
 syntax enable
 
 let g:python3_host_prog = '/usr/bin/python3'
