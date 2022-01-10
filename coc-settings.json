@@ -16,6 +16,10 @@
             "args": ["--lsp"],
             "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
             "filetypes": ["haskell", "lhaskell"]
+        },
+        "cwl": {
+            "command": "benten-ls",
+            "filetypes": ["cwl"]
         }
     },
     "java.home": "/lib/jvm/java-11-openjdk",
