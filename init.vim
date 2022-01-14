@@ -213,6 +213,7 @@ let g:ale_linters = {
     \ 'python': [],
     \ 'haskell': [],
     \ 'rust': [],
+    \ 'json': [],
     \ 'typescript': []
     \}
 
