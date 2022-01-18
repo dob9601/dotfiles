@@ -20,6 +20,9 @@ Plug 'folke/tokyonight.nvim'
 
 Plug 'deris/vim-shot-f'
 
+" Auto detect indent
+Plug 'tpope/vim-sleuth'
+
 " Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
 Plug 'folke/trouble.nvim'
 
@@ -214,7 +217,8 @@ let g:ale_linters = {
     \ 'haskell': [],
     \ 'rust': [],
     \ 'json': [],
-    \ 'typescript': []
+    \ 'typescript': [],
+    \ 'typescriptreact': []
     \}
 
 " Django
@@ -252,7 +256,7 @@ runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-
 
 tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
 
-set tabstop=4 shiftwidth=4 expandtab
+" set tabstop=4 shiftwidth=4 expandtab
 
 set mouse=a " Enable mouse support
 
