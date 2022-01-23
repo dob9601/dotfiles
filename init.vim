@@ -15,13 +15,17 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
-" Colourscheme
+
+Plug 'f-person/git-blame.nvim'
+
+" Colourschemes
 Plug 'folke/tokyonight.nvim'
+Plug 'EdenEast/nightfox.nvim'
+Plug 'sainnhe/sonokai'
+
+Plug 'shumphrey/fugitive-gitlab.vim'
 
 Plug 'deris/vim-shot-f'
-
-" Auto detect indent
-Plug 'tpope/vim-sleuth'
 
 " Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
 Plug 'folke/trouble.nvim'
@@ -30,7 +34,6 @@ Plug 'folke/trouble.nvim'
 Plug 'tpope/vim-fugitive' " Wrapper
 " Plug 'mhinz/vim-signify'
 Plug 'airblade/vim-gitgutter'
-" Plug 'tveskag/nvim-blame-line' " Git blame
 
 " Improved syntax
 Plug 'sheerun/vim-polyglot'
@@ -100,6 +103,7 @@ call plug#end()
 
 " Required:
 filetype plugin indent on
+
 autocmd BufNewFile,BufRead *.cwl set filetype=cwl
 autocmd BufNewFile,BufRead *.cwl set syntax=yaml
 
@@ -131,7 +135,7 @@ endfunction
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 nnoremap <Leader>p :CocCommand<CR>
-nnoremap <Leader>t :Telescope<CR>
+nnoremap <A-p> :Telescope<CR>
 nnoremap <Leader>b :BufferPick<CR>
 nnoremap <Leader>f :call CocAction('format')<CR>
 
@@ -216,9 +220,7 @@ let g:ale_linters = {
     \ 'python': [],
     \ 'haskell': [],
     \ 'rust': [],
-    \ 'json': [],
-    \ 'typescript': [],
-    \ 'typescriptreact': []
+    \ 'typescript': []
     \}
 
 " Django
@@ -235,8 +237,12 @@ highlight GitGutterChangeLineNr guifg=lightblue
 highlight GitGutterDeleteLineNr guifg=lightred
 highlight GitGutterChangeDeleteLineNr guifg=lightred
 
-let g:tokyonight_style = 'storm'
-colorscheme tokyonight
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
+colorscheme sonokai
+
+let g:fugitive_gitlab_domains = ['https://dev-gitlab.londc.genomicsplc.com/']
+let g:gitlab_api_keys = {'dev-gitlab.londc.genomicsplc.com': 'z-fUazcJnmsf696kruat'}
 
 " Move cursor to new split
 set splitright
@@ -256,7 +262,7 @@ runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-
 
 tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
 
-" set tabstop=4 shiftwidth=4 expandtab
+set tabstop=4 shiftwidth=4 expandtab
 
 set mouse=a " Enable mouse support
 
@@ -313,7 +319,7 @@ nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
 lua << EOF
 require('lualine').setup({
     options = {
-        theme = 'tokyonight'
+        theme = 'auto'
     },
 
     sections = {
