@@ -2,12 +2,7 @@ if &compatible
     set nocompatible               " Be iMproved
 endif
 
-" Disable HTML polyglot due to dodgy inline-js indents
-let g:polyglot_disabled = ['html'] " breaks java
-
 call plug#begin('~/.vim/plugged')
-
-set updatetime=300
 
 " Autocompletion - CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -55,7 +50,7 @@ Plug 'honza/vim-snippets'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'folke/todo-comments.nvim'
 
-" Fuzzy finder
+" Telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'fannheyward/telescope-coc.nvim'
 
@@ -82,18 +77,35 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 call plug#end()
 
-" Required:
+" ----------------------- Vim ----------------------
 filetype plugin indent on
+syntax enable
+
+set updatetime=300
+
+" Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
+set inccommand=split
+"
+" Enable mouse support
+set mouse=a
+"
+" Default to using the system clipboard
+set clipboard=unnamedplus
 
 autocmd BufNewFile,BufRead *.cwl setlocal filetype=cwl syntax=yaml
 autocmd BufNewFile,BufRead *.html.tera setlocal syntax=htmldjango
 autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
-
-syntax enable
+autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
 
 let g:python3_host_prog = '/usr/bin/python3'
 
-" --------------------   Coc    --------------------
+" => Colorscheme
+set termguicolors
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
+colorscheme sonokai
+
+" ----------------------- Coc ----------------------
 inoremap <silent><expr> <c-space> coc#refresh()
 " Tab stuff
 inoremap <silent><expr> <TAB>
@@ -110,14 +122,13 @@ function! s:check_back_space() abort
 endfunction
 
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-nnoremap <Leader>p :CocCommand<CR>
-nnoremap <Leader>f :call CocAction('format')<CR>
-
-nnoremap <Leader><Leader> :CocAction<CR>
-
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+nnoremap <Leader>p :CocCommand<CR>
+nnoremap <Leader>f :call CocAction('format')<CR>
+nnoremap <Leader><Leader> :CocAction<CR>
+
 
 nmap <Leader>rn <Plug>(coc-rename)
 nmap <silent>gd <Plug>(coc-definition)
@@ -126,25 +137,39 @@ nmap <silent>gr <Plug>(coc-references)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-set inccommand=nosplit
+nnoremap <silent> <c-K> :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
 
 " ----------------- Indent Blankline ---------------
 
 set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
+let g:indentLine_fileTypeExclude = ['startify', 'help']
 
 " -------------------- Bufferline ------------------
 
-let bufferline = get(g:, 'bufferline', {})
-let bufferline.auto_hide = v:false
 nnoremap <silent><Leader>b :BufferLinePick<CR>
 nnoremap <silent><A-b>d :BufferClose<CR>
 
 " ----------------------- Git ----------------------
+
 nnoremap ga :Git add %<CR>
 nnoremap gc :Git commit<CR>
 nnoremap gs :Git status<CR>
 
 " -------------------- Startify --------------------
+
+" WIP: Startify integration
+" autocmd User StartifyReady :Goyo x100%
+" autocmd User StartifyAllBuffersOpened :Goyo
+
 let g:startify_custom_header = [
             \ '     █████████ ██████████ ██████████ ███    ███ ███ ███████████████',
             \ '     ███▀▀▀███ ███    ███ ███    ███ ███    ███ ███ ███▀▀▀███▀▀▀███',
@@ -173,21 +198,25 @@ function! s:gitUntracked()
 endfunction
 
 let g:startify_lists = [
-        \ { 'type': 'files',     'header': ['   MRU']            },
-        \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
         \ { 'type': 'sessions',  'header': ['   Sessions']       },
+        \ { 'type': 'commands',  'header': ['   Commands']       },
         \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+        \ { 'type': 'files',     'header': ['   MRU']            },
+        \ { 'type': 'dir',       'header': ['   MRU => '. getcwd()] },
         \ { 'type': function('s:gitModified'),  'header': ['   Git Modified']},
         \ { 'type': function('s:gitUntracked'), 'header': ['   Git Untracked']},
-        \ { 'type': 'commands',  'header': ['   Commands']       },
+        \ ]
+
+let g:startify_commands = [
+        \ ['Vim Reference', 'tab help ref'],
+        \ ['Browse Files', 'Telescope find_files'],
         \ ]
 
 "--------------------   Ale  -------------------- 
-" let g:ale_disable_lsp = 1
 let g:ale_echo_cursor= 0
 let g:ale_cursor_detail=1
 let g:ale_floating_preview = 1
-let g:ale_floating_window_border = ['║', '═', '╔', '╗', '╝', '╚']
+let g:ale_floating_window_border = ['│', '─', '┌', '┐', '┘', '└']
 let g:ale_linters = {
     \ 'python': [],
     \ 'haskell': [],
@@ -198,8 +227,6 @@ let g:ale_linters = {
 " Django
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
-" Colour Scheme
-set termguicolors
 
 " Gutter marks
 let g:gitgutter_signs=0
@@ -209,16 +236,6 @@ highlight GitGutterChangeLineNr guifg=lightblue
 highlight GitGutterDeleteLineNr guifg=lightred
 highlight GitGutterChangeDeleteLineNr guifg=lightred
 
-let g:sonokai_style = 'andromeda'
-let g:sonokai_enable_italic = 1
-colorscheme sonokai
-
-let g:fugitive_gitlab_domains = ['https://dev-gitlab.londc.genomicsplc.com/']
-let g:gitlab_api_keys = {'dev-gitlab.londc.genomicsplc.com': 'z-fUazcJnmsf696kruat'}
-
-" Move cursor to new split
-set splitright
-set splitbelow
 
 " --------------
 
@@ -226,18 +243,12 @@ set nowrap " Disable text-wrap
 set number " Show line numbers
 
 set signcolumn=yes:1
-" autocmd BufRead,BufNewFile * setlocal signcolumn=number " Enable signcolumn by default
-highlight clear SignColumn " Clear highlight from sign column
 
 runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-s>
 
 tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
 
 set tabstop=4 shiftwidth=4 expandtab
-
-set mouse=a " Enable mouse support
-
-set clipboard+=unnamedplus " Always use system clipboard
 
 set cursorline " Make cursor easier to find
 
@@ -247,26 +258,6 @@ set concealcursor=""
 
 set scrolloff=10
 
-" Function to delete all hidden buffers
-function DeleteHiddenBuffers()
-    let tpbl=[]
-    call map(range(1, tabpagenr('$')), 'extend(tpbl, tabpagebuflist(v:val))')
-    for buf in filter(range(1, bufnr('$')), 'bufexists(v:val) && index(tpbl, v:val)==-1')
-        silent execute 'bwipeout' buf
-    endfor
-endfunction
-
-nnoremap <silent> <c-K> :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
 "
 "------------------ Indent Line ----------------- 
 
