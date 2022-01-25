@@ -15,30 +15,22 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
-
+" Show Git Blames inline
 Plug 'f-person/git-blame.nvim'
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
-Plug 'EdenEast/nightfox.nvim'
+Plug 'marko-cerovac/material.nvim'
 Plug 'sainnhe/sonokai'
 
-Plug 'shumphrey/fugitive-gitlab.vim'
+" Highlight F/f/T/t jumps
+Plug 'deris/vim-shot-f' 
 
-Plug 'deris/vim-shot-f'
-
-" Plug 'antoinemadec/openrgb.nvim', {'do': 'UpdateRemotePlugins'}
-Plug 'folke/trouble.nvim'
-
-" Git
-Plug 'tpope/vim-fugitive' " Wrapper
-" Plug 'mhinz/vim-signify'
+" Git wrapper
+Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" Improved syntax
-Plug 'sheerun/vim-polyglot'
-
-" Commenting
+" Commenting shortcuts
 Plug 'preservim/nerdcommenter'
 
 " Start page
@@ -49,7 +41,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
 
 " Better top bar
-Plug 'romgrk/barbar.nvim'
+Plug 'akinsho/bufferline.nvim'
 
 " Colour code highlighting
 Plug 'ap/vim-css-color'
@@ -58,19 +50,14 @@ Plug 'ap/vim-css-color'
 Plug 'junegunn/goyo.vim'
 
 Plug 'honza/vim-snippets'
-" Use coc-snippets over ultisnip to work around bug with angle brackets
 
 " Todo highlighting
 Plug 'nvim-lua/plenary.nvim'
 Plug 'folke/todo-comments.nvim'
-" Pairs-closing
-" Plug 'jiangmiao/auto-pairs'
 
 " Fuzzy finder
-Plug 'fannheyward/telescope-coc.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-" Plug 'ctrlpvim/ctrlp.vim'
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'fannheyward/telescope-coc.nvim'
 
 " Ron highlighting
 Plug 'ron-rs/ron.vim'
@@ -84,37 +71,27 @@ Plug 'tpope/vim-eunuch'
 " Tagbar
 Plug 'preservim/tagbar'
 
-" GraphViz
-Plug 'wannesm/wmgraphviz.vim'
-
 " Ale
 Plug 'dense-analysis/ale'
 
 " Marks in gutter
 Plug 'kshenoy/vim-signature'
 
-" Haskell
-Plug 'neovimhaskell/haskell-vim'
-
-" Treesitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+" Treesitter synax highlighting
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 call plug#end()
 
 " Required:
 filetype plugin indent on
 
-autocmd BufNewFile,BufRead *.cwl set filetype=cwl
-autocmd BufNewFile,BufRead *.cwl set syntax=yaml
+autocmd BufNewFile,BufRead *.cwl setlocal filetype=cwl syntax=yaml
+autocmd BufNewFile,BufRead *.html.tera setlocal syntax=htmldjango
+autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
 
 syntax enable
 
 let g:python3_host_prog = '/usr/bin/python3'
-
-" Plugin Config -----------
-
-" Snippets
-let g:UltiSnipsExpandTrigger="<nop>"
 
 " --------------------   Coc    --------------------
 inoremap <silent><expr> <c-space> coc#refresh()
@@ -135,8 +112,6 @@ endfunction
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 nnoremap <Leader>p :CocCommand<CR>
-nnoremap <A-p> :Telescope<CR>
-nnoremap <Leader>b :BufferPick<CR>
 nnoremap <Leader>f :call CocAction('format')<CR>
 
 nnoremap <Leader><Leader> :CocAction<CR>
@@ -157,15 +132,12 @@ set inccommand=nosplit
 
 set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
 
-" BarBar
+" -------------------- Bufferline ------------------
+
 let bufferline = get(g:, 'bufferline', {})
 let bufferline.auto_hide = v:false
-nnoremap <silent><Leader>b :BufferPick<CR>
+nnoremap <silent><Leader>b :BufferLinePick<CR>
 nnoremap <silent><A-b>d :BufferClose<CR>
-nnoremap <silent><A-b>p :BufferPin<CR>
-nnoremap <silent><A-b>c :BufferCloseAllButCurrent<CR>
-
-
 
 " ----------------------- Git ----------------------
 nnoremap ga :Git add %<CR>
@@ -249,7 +221,6 @@ set splitright
 set splitbelow
 
 " --------------
-au BufNewFile,BufRead,BufReadPost *.html.tera set syntax=htmldjango
 
 set nowrap " Disable text-wrap
 set number " Show line numbers
@@ -274,11 +245,6 @@ nnoremap <del> "_x " Make the delete button not yank
 
 set concealcursor=""
 
-" set noequalalways " Disable equalalways so splits aren't resized to be equal when another split is made
-
-" Custom filetype stuff
-autocmd BufNewFile,BufRead *.pw set filetype=pw
-
 set scrolloff=10
 
 " Function to delete all hidden buffers
@@ -301,20 +267,15 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+"
+"------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '|'
 
-" Fuzzy finder
-if executable('fish')
-    " use fish for embedded terminals
-    set shell=fish
-    " use bash for else
-    let $SHELL = 'bash'
-endif
+"------------------- Telescope ------------------ 
 
+nnoremap <A-p> :Telescope<CR>
 nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
-" let g:fzf_preview_default_fzf_options = { '--reverse': v:true, '--preview-window': 'nowrap' }
-" let g:fzf_preview_use_dev_icons = 1
 
 lua << EOF
 require('lualine').setup({
@@ -344,44 +305,6 @@ require('lualine').setup({
     extensions = {'fugitive'}
 })
 
-require("trouble").setup {
-    height = 10, -- height of the trouble list
-    icons = true, -- use devicons for filenames
-    mode = "loclist", -- "lsp_workspace_diagnostics", "lsp_document_diagnostics", "quickfix", "lsp_references", "loclist"
-    fold_open = "", -- icon used for open folds
-    fold_closed = "", -- icon used for closed folds
-    action_keys = { -- key mappings for actions in the trouble list
-        close = "q", -- close the list
-        cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
-        refresh = "r", -- manually refresh
-        jump = {"<cr>", "<tab>"}, -- jump to the diagnostic or open / close folds
-        jump_close = {"o"}, -- jump to the diagnostic and close the list
-        toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
-        toggle_preview = "P", -- toggle auto_preview
-        hover = "K", -- opens a small poup with the full multiline message
-        preview = "p", -- preview the diagnostic location
-        close_folds = {"zM", "zm"}, -- close all folds
-        open_folds = {"zR", "zr"}, -- open all folds
-        toggle_fold = {"zA", "za"}, -- toggle fold of current file
-        previous = "k", -- preview item
-        next = "j" -- next item
-    },
-    indent_lines = false, -- add an indent guide below the fold icons
-    auto_open = false, -- automatically open the list when you have diagnostics
-    auto_close = false, -- automatically close the list when you have no diagnostics
-    auto_preview = true, -- automatyically preview the location of the diagnostic. <esc> to close preview and go back to last window
-    auto_fold = false, -- automatically fold a file trouble list at creation
-    signs = {
-        -- icons / text used for a diagnostic
-        error = "",
-        warning = "",
-        hint = "",
-        information = "",
-        other = "﫠"
-    },
-    use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
-}
-
 require('todo-comments').setup {
 }
 
@@ -395,7 +318,6 @@ require('telescope').setup {
         }
     }
 }
-
 require('telescope').load_extension('coc')
 
 require'nvim-treesitter.configs'.setup {
@@ -412,7 +334,10 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-vim.g.bufferline = {
-  icons = 'both'
+require("bufferline").setup {
+    options = {
+        diagnostics = "coc",
+        separator_style = "slant"
+    }
 }
 EOF
