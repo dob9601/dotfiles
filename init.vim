@@ -10,9 +10,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
-" Show Git Blames inline
-Plug 'f-person/git-blame.nvim'
-
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
 Plug 'marko-cerovac/material.nvim'
@@ -21,15 +18,19 @@ Plug 'sainnhe/sonokai'
 " Highlight F/f/T/t jumps
 Plug 'deris/vim-shot-f' 
 
-" Git wrapper
+" Git wrappers
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+Plug 'rhysd/git-messenger.vim'
 
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
 
 " Start page
 Plug 'mhinz/vim-startify'
+
+" Fancy stylish stuff
+Plug 'sunjon/stylish.nvim'
 
 " Icons
 Plug 'ryanoasis/vim-devicons'
@@ -101,8 +102,14 @@ let g:python3_host_prog = '/usr/bin/python3'
 
 " => Colorscheme
 set termguicolors
+
+" Sonokai
 let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
+
+" Material
+let g:material_style = 'deep ocean'
+
 colorscheme sonokai
 
 " ----------------------- Coc ----------------------
@@ -156,13 +163,28 @@ let g:indentLine_fileTypeExclude = ['startify', 'help']
 " -------------------- Bufferline ------------------
 
 nnoremap <silent><Leader>b :BufferLinePick<CR>
-nnoremap <silent><A-b>d :BufferClose<CR>
+nnoremap <silent><A-b>d :bd<CR>
+nnoremap <silent><A-b>n :BufferLineCycleNext<CR>
+nnoremap <silent><A-b>p :BufferLineCyclePrev<CR>
 
 " ----------------------- Git ----------------------
 
+" Fugitive bindings
 nnoremap ga :Git add %<CR>
 nnoremap gc :Git commit<CR>
 nnoremap gs :Git status<CR>
+
+" Gutter marks
+let g:gitgutter_signs=0
+let g:gitgutter_highlight_linenrs=1
+highlight GitGutterAddLineNr guifg=lightgreen
+highlight GitGutterChangeLineNr guifg=lightblue
+highlight GitGutterDeleteLineNr guifg=lightred
+highlight GitGutterChangeDeleteLineNr guifg=lightred
+
+" Git Messenger
+let g:git_messenger_no_default_mappings = v:true
+nnoremap <silent><C-g> :GitMessenger<CR>
 
 " -------------------- Startify --------------------
 
@@ -228,13 +250,6 @@ let g:ale_linters = {
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
 
-" Gutter marks
-let g:gitgutter_signs=0
-let g:gitgutter_highlight_linenrs=1
-highlight GitGutterAddLineNr guifg=lightgreen
-highlight GitGutterChangeLineNr guifg=lightblue
-highlight GitGutterDeleteLineNr guifg=lightred
-highlight GitGutterChangeDeleteLineNr guifg=lightred
 
 
 " --------------
@@ -268,10 +283,22 @@ let g:indentLine_char = '|'
 nnoremap <A-p> :Telescope<CR>
 nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
 
+"-------------------- Stylish ------------------- 
+lua << EOF
+vim.ui.menu = require('stylish').ui_menu()
+
+vim.api.nvim_set_keymap(
+  'n',
+  '<F1>',
+  "<Cmd>lua vim.ui.menu(vim.fn.menu_get(''), {kind='menu', prompt='Main Menu'}, function(res) print('### ' ..res) end)<CR>",
+  { noremap = true, silent = true }
+)
+EOF
+
 lua << EOF
 require('lualine').setup({
     options = {
-        theme = 'auto'
+        theme = 'sonokai'
     },
 
     sections = {
