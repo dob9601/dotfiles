@@ -167,6 +167,16 @@ nnoremap <silent><A-b>d :bd<CR>
 nnoremap <silent><A-b>n :BufferLineCycleNext<CR>
 nnoremap <silent><A-b>p :BufferLineCyclePrev<CR>
 
+lua << EOF
+require("bufferline").setup {
+    options = {
+        diagnostics = "coc",
+        separator_style = "slant",
+        always_show_bufferline = false
+    }
+}
+EOF
+
 " ----------------------- Git ----------------------
 
 " Fugitive bindings
@@ -249,9 +259,6 @@ let g:ale_linters = {
 " Django
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
-
-
-
 " --------------
 
 set nowrap " Disable text-wrap
@@ -267,13 +274,12 @@ set tabstop=4 shiftwidth=4 expandtab
 
 set cursorline " Make cursor easier to find
 
-nnoremap <del> "_x " Make the delete button not yank
-
-set concealcursor=""
+" Make the delete button not yank
+nnoremap <del> "_x
+nnoremap x "_x
 
 set scrolloff=10
 
-"
 "------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '|'
@@ -282,6 +288,20 @@ let g:indentLine_char = '|'
 
 nnoremap <A-p> :Telescope<CR>
 nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
+
+lua << EOF
+require('telescope').setup {
+    defaults = {
+        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' }
+    },
+    pickers = {
+        find_files = {
+            theme = "ivy"
+        }
+    }
+}
+require('telescope').load_extension('coc')
+EOF
 
 "-------------------- Stylish ------------------- 
 lua << EOF
@@ -322,22 +342,18 @@ require('lualine').setup({
 
     extensions = {'fugitive'}
 })
+EOF
 
+"--------------------- Todo ------------------------
+
+lua << EOF
 require('todo-comments').setup {
 }
+EOF
 
-require('telescope').setup {
-    defaults = {
-        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' }
-    },
-    pickers = {
-        find_files = {
-            theme = "ivy"
-        }
-    }
-}
-require('telescope').load_extension('coc')
+"------------------ Treesitter ---------------------
 
+lua << EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { "javascript" }, -- List of parsers to ignore installing
@@ -350,12 +366,5 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
-}
-
-require("bufferline").setup {
-    options = {
-        diagnostics = "coc",
-        separator_style = "slant"
-    }
 }
 EOF
