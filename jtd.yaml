@@ -1,9 +1,4 @@
 nvim:
-  pre_install:
-    - sudo apt install lolcat
-    - echo "foo"
-    - echo "bar"
-    - echo "baz"
   file: init.vim
   target: ~/.config/nvim/init.vim
 
@@ -20,5 +15,8 @@ kitty-theme:
   target: ~/.config/kitty/theme.conf
 
 fish:
+  pre_install:
+    - git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+    - ~/.fzf/install
   file: config.fish
   target: ~/.config/fish/config.fish
