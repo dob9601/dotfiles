@@ -10,6 +10,9 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
+" Tetris
+Plug 'alec-gibson/nvim-tetris'
+
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
 Plug 'marko-cerovac/material.nvim'
@@ -27,10 +30,8 @@ Plug 'rhysd/git-messenger.vim'
 Plug 'preservim/nerdcommenter'
 
 " Start page
-Plug 'mhinz/vim-startify'
-
-" Fancy stylish stuff
-Plug 'sunjon/stylish.nvim'
+" Plug 'mhinz/vim-startify'
+Plug 'startup-nvim/startup.nvim'
 
 " Icons
 Plug 'ryanoasis/vim-devicons'
@@ -82,6 +83,9 @@ call plug#end()
 filetype plugin indent on
 syntax enable
 
+set splitbelow
+set splitright
+
 set updatetime=300
 
 " Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
@@ -113,6 +117,12 @@ let g:material_style = 'deep ocean'
 colorscheme sonokai
 
 " ----------------------- Coc ----------------------
+let g:coc_global_extensions = [
+    \ 'coc-yank', 'coc-snippets', 'coc-pairs',
+    \ 'coc-html', 'coc-explorer', 'coc-yaml',
+    \ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
+    \ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css']
+
 inoremap <silent><expr> <c-space> coc#refresh()
 " Tab stuff
 inoremap <silent><expr> <TAB>
@@ -155,11 +165,6 @@ function! s:show_documentation()
   endif
 endfunction
 
-" ----------------- Indent Blankline ---------------
-
-set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
-let g:indentLine_fileTypeExclude = ['startify', 'help']
-
 " -------------------- Bufferline ------------------
 
 nnoremap <silent><Leader>b :BufferLinePick<CR>
@@ -197,6 +202,25 @@ let g:git_messenger_no_default_mappings = v:true
 nnoremap <silent><C-g> :GitMessenger<CR>
 
 " -------------------- Startify --------------------
+
+lua << EOF
+require("startup").setup({
+    header = {
+        type = "text",
+        align = "center",
+        fold_section = false,
+        title = "Header",
+        margin = 5,
+        content = require("startup.headers").hydra_header,
+        highlight = "Statement",
+        default_color = "",
+        oldfiles_amount = 0,
+    },
+    parts = {
+        "header",
+    },
+}) -- put theme name here
+EOF
 
 " WIP: Startify integration
 " autocmd User StartifyReady :Goyo x100%
@@ -283,6 +307,8 @@ set scrolloff=10
 "------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '|'
+set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
+let g:indentLine_fileTypeExclude = ['startify', 'help', 'startup']
 
 "------------------- Telescope ------------------ 
 
@@ -290,9 +316,16 @@ nnoremap <A-p> :Telescope<CR>
 nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
 
 lua << EOF
+local actions = require("telescope.actions")
 require('telescope').setup {
     defaults = {
-        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' }
+        file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' },
+        initial_mode = 'insert',
+        mappings = {
+            i = {
+                ["<esc>"] = actions.close
+            }
+        }
     },
     pickers = {
         find_files = {
@@ -303,17 +336,7 @@ require('telescope').setup {
 require('telescope').load_extension('coc')
 EOF
 
-"-------------------- Stylish ------------------- 
-lua << EOF
-vim.ui.menu = require('stylish').ui_menu()
-
-vim.api.nvim_set_keymap(
-  'n',
-  '<F1>',
-  "<Cmd>lua vim.ui.menu(vim.fn.menu_get(''), {kind='menu', prompt='Main Menu'}, function(res) print('### ' ..res) end)<CR>",
-  { noremap = true, silent = true }
-)
-EOF
+"-------------------- Lualine ------------------- 
 
 lua << EOF
 require('lualine').setup({
