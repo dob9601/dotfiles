@@ -10,8 +10,9 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
-" Tetris
+" ???
 Plug 'alec-gibson/nvim-tetris'
+Plug 'seandewar/nvimesweeper'
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
@@ -31,7 +32,8 @@ Plug 'preservim/nerdcommenter'
 
 " Start page
 " Plug 'mhinz/vim-startify'
-Plug 'startup-nvim/startup.nvim'
+" Plug 'startup-nvim/startup.nvim'
+Plug 'goolord/alpha-nvim'
 
 " Icons
 Plug 'ryanoasis/vim-devicons'
@@ -88,6 +90,9 @@ set splitright
 
 set updatetime=300
 
+" Speedy insert escape
+imap jj <esc>d2h
+
 " Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
 set inccommand=split
 "
@@ -116,12 +121,16 @@ let g:material_style = 'deep ocean'
 
 colorscheme sonokai
 
+" Conceal the tildes at the end of a buffer, makes start page look nicer
+highlight EndOfBuffer guifg=bg
+
 " ----------------------- Coc ----------------------
 let g:coc_global_extensions = [
     \ 'coc-yank', 'coc-snippets', 'coc-pairs',
     \ 'coc-html', 'coc-explorer', 'coc-yaml',
     \ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
-    \ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css']
+    \ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css',
+    \ 'coc-java']
 
 inoremap <silent><expr> <c-space> coc#refresh()
 " Tab stuff
@@ -145,7 +154,6 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 nnoremap <Leader>p :CocCommand<CR>
 nnoremap <Leader>f :call CocAction('format')<CR>
 nnoremap <Leader><Leader> :CocAction<CR>
-
 
 nmap <Leader>rn <Plug>(coc-rename)
 nmap <silent>gd <Plug>(coc-definition)
@@ -201,72 +209,61 @@ highlight GitGutterChangeDeleteLineNr guifg=lightred
 let g:git_messenger_no_default_mappings = v:true
 nnoremap <silent><C-g> :GitMessenger<CR>
 
-" -------------------- Startify --------------------
+" ----------------- Start Screen -----------------
 
 lua << EOF
-require("startup").setup({
-    header = {
-        type = "text",
-        align = "center",
-        fold_section = false,
-        title = "Header",
-        margin = 5,
-        content = require("startup.headers").hydra_header,
-        highlight = "Statement",
-        default_color = "",
-        oldfiles_amount = 0,
-    },
-    parts = {
-        "header",
-    },
-}) -- put theme name here
+local io = require "io"
+local handle = assert(io.popen('bash -c history', 'r'))
+print(assert(handle:read('*a')))
 EOF
 
-" WIP: Startify integration
-" autocmd User StartifyReady :Goyo x100%
-" autocmd User StartifyAllBuffersOpened :Goyo
+" Cursed hack to disable statusline completely for alpha buffer
+autocmd BufEnter * set laststatus=2
+autocmd FileType alpha setlocal laststatus=0
 
-let g:startify_custom_header = [
-            \ '     █████████ ██████████ ██████████ ███    ███ ███ ███████████████',
-            \ '     ███▀▀▀███ ███    ███ ███    ███ ███    ███ ███ ███▀▀▀███▀▀▀███',
-            \ '     ███   ███ ███    ███ ███    ███ ███    ███ ███ ███   ███   ███',
-            \ '     ███   ███ ███▄▄▄     ███    ███ ███    ███ ███ ███   ███   ███',
-            \ '     ███   ███ ███▀▀▀     ███    ███ ███    ███ ███ ███   ███   ███',
-            \ '     ███   ███ ███    ███ ███    ███ ███    ███ ███ ███   ███   ███',
-            \ '     ███   ███ ███    ███ ███    ███ ███    ███ ███ ███   ███   ███',
-            \ '     ███   ███ ██████████ ██████████ ██████████ ███ ███   ███   ███',
-            \ ]
+lua << EOF
+local alpha = require("alpha")
+local dashboard = require("alpha.themes.dashboard")
 
-let g:startify_bookmarks = ['~/.config/nvim/init.vim']
+-- Set header
+dashboard.section.header.val = {
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⢦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+    "⠀⠀⠀⣴⢟⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⢛⣷⣎⡠⡀⠛⢤⣠⣼⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⡿⣦⡀", 
+    "⠀⠀⠀⣿⠀⠌⡨⠈⠌⡈⠌⡈⠌⡈⠌⠨⠠⣹⣗⠜⡌⡒⡄⢹⡷⠀⠅⢊⠈⠌⠄⠅⠡⠡⠨⢈⢐⡸⣿⡇", 
+    "⠀⠀⠀⠻⣷⣽⠊⠨⠐⠠⠁⠔⢐⠠⢱⢹⣼⣿⡣⢣⢑⠕⡜⢜⢿⣮⠝⢸⠨⠠⠡⢈⢂⠡⠨⢠⢺⣼⠟⠁", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠠⢁⢂⢸⢸⣿⡪⡘⡌⢆⠇⡎⣺⠞⠁⡀⡂⠌⠄⠅⢂⢐⡠⣏⣷⠟⠁⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠐⡐⠠⢸⢸⣿⡪⡘⡌⢎⣼⠞⠁⡀⡐⡀⡂⠌⠄⠅⡢⣲⣵⠟⠁⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢐⠠⠡⢸⢸⣿⡪⢌⣮⠞⠁⢀⢐⢀⢂⢐⠐⡈⢄⢕⣼⢿⡁⠀⠀⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢀⠂⡡⠸⣸⣿⣾⠟⠁⠀⠌⠠⢂⠐⡀⡂⢔⢔⣵⡟⢇⢄⠱⢆⡀⠀⠀⠀⠀", 
+    "⠀⠀⠀⡠⠊⣿⠀⠨⢈⠌⠨⢀⠂⡂⢜⢺⠟⠁⢀⠂⡡⠁⠅⡂⠌⣀⢖⣵⣟⢗⠱⡑⡜⢔⢄⠙⣤⠀⠀⠀", 
+    "⠀⡠⠊⡰⡨⣿⠀⠨⠠⠈⠌⡐⢐⠐⢸⠄⡀⢂⠂⡂⢂⢁⠂⡂⣦⣳⡿⢝⢌⢆⢣⢱⠸⡐⡅⢇⢄⠙⢆⡀", 
+    "⠈⠛⣵⡪⡌⣿⠀⠨⠐⡁⠅⡐⢐⠈⠌⡀⡂⢂⠂⡂⢂⠐⡜⣵⣟⢏⢎⠪⡢⡑⡕⢌⠎⡜⢌⢪⡲⡯⠋⠀", 
+    "⠀⠀⠀⠻⢮⣿⠀⠨⠐⡐⢐⠐⡐⠨⠐⡀⡂⢂⠂⣢⡞⠩⢉⡯⢢⠱⡘⡌⢆⢣⢊⢎⢪⢸⢜⡯⠋⠀⠀⠀", 
+    "⠀⠀⠀⠀⠈⣿⠀⠨⠐⡐⢐⠐⠠⠡⠨⢀⠂⡂⣒⣼⣶⢷⢞⢎⠪⣊⢪⠸⡨⡢⠣⣊⡶⡻⠋⠀⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠐⡐⢈⠌⠄⠅⠂⣆⣿⣛⠛⡛⣻⡪⣟⡛⠛⡛⣼⡜⢛⠛⠻⣯⠞⢛⢛⢳⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⢀⠂⡂⠂⠄⢅⡸⣪⣾⢫⠇⡂⢂⡟⡌⡎⡐⢡⢴⢤⡌⠄⠌⡦⠦⡬⢐⠀⡾⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⠐⡐⠠⠡⢥⣪⣾⢻⠨⡞⡐⠠⡽⡘⣼⠁⡂⣝⣞⣽⠃⠌⣸⠀⢠⢃⠂⢼⠁⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠠⡡⣣⡿⠻⢵⡱⣽⢀⢂⣹⡏⣪⠏⡐⢸⡿⠋⡟⠨⢰⡇⠀⡾⠐⣈⣎⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⠙⠷⠿⠿⠷⠿⠋⠀⠀⠈⠹⣷⡶⡶⡶⡯⢺⡶⡶⠓⠃⠘⠚⠒⠓⠃⠀⠓⠓⠒⠚⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⣧⢣⢞⣽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠹⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+}
 
-" returns all modified files of the current git repo
-" `2>/dev/null` makes the command fail quietly, so that when we are not
-" in a git repo, the list will be empty
-function! s:gitModified()
-    let files = systemlist('git ls-files -m 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
-endfunction
+-- Set menu
+dashboard.section.buttons.val = {
+    dashboard.button( "e", "  New File" , ":ene <BAR> startinsert <CR>"),
+    dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
+    dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
+    dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
+    dashboard.button( "s", "  Settings" , ":e $MYVIMRC | vsplit | CocConfig<CR> | :wincmd p<CR>"),
+    dashboard.button( "q", "  Quit", ":qa<CR>"),
+}
 
-" same as above, but show untracked files, honouring .gitignore
-function! s:gitUntracked()
-    let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
-    return map(files, "{'line': v:val, 'path': v:val}")
-endfunction
+local fortune = require("alpha.fortune") 
+dashboard.section.footer.val = fortune()
 
-let g:startify_lists = [
-        \ { 'type': 'sessions',  'header': ['   Sessions']       },
-        \ { 'type': 'commands',  'header': ['   Commands']       },
-        \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
-        \ { 'type': 'files',     'header': ['   MRU']            },
-        \ { 'type': 'dir',       'header': ['   MRU => '. getcwd()] },
-        \ { 'type': function('s:gitModified'),  'header': ['   Git Modified']},
-        \ { 'type': function('s:gitUntracked'), 'header': ['   Git Untracked']},
-        \ ]
-
-let g:startify_commands = [
-        \ ['Vim Reference', 'tab help ref'],
-        \ ['Browse Files', 'Telescope find_files'],
-        \ ]
+alpha.setup(dashboard.opts)
+EOF
 
 "--------------------   Ale  -------------------- 
 let g:ale_echo_cursor= 0
@@ -290,7 +287,8 @@ set number " Show line numbers
 
 set signcolumn=yes:1
 
-runtime mswin.vim " Enable mswin style bindings - until I break the habit of <C-s>
+runtime mswin.vim " Enable mswin style bindings
+nnoremap <C-s> :w<CR>
 
 tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
 
@@ -306,9 +304,9 @@ set scrolloff=10
 
 "------------------ Indent Line ----------------- 
 
-let g:indentLine_char = '|'
+let g:indentLine_char = '▏'
 set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
-let g:indentLine_fileTypeExclude = ['startify', 'help', 'startup']
+let g:indentLine_fileTypeExclude = ['startify', 'help', 'startup', 'alpha']
 
 "------------------- Telescope ------------------ 
 
@@ -330,6 +328,9 @@ require('telescope').setup {
     pickers = {
         find_files = {
             theme = "ivy"
+        },
+        oldfiles = {
+            theme = "ivy"
         }
     }
 }
@@ -341,7 +342,8 @@ EOF
 lua << EOF
 require('lualine').setup({
     options = {
-        theme = 'sonokai'
+        theme = 'sonokai',
+        disabled_filetypes = {'alpha'}
     },
 
     sections = {
