@@ -1,9 +1,12 @@
 alias vim='nvim'
 # alias cat='bat'
-# alias ls='exa --long --header --git'
+alias ls='exa --long --header'
 alias ssh='kitty +kitten ssh'
+alias cat='bat'
 export GPG_TTY=(tty)
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+set theme_color_scheme nord
 
 # function fish_prompt
 #     powerline-shell --shell bare $status

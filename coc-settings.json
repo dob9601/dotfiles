@@ -4,18 +4,29 @@
     "python.linting.pylintEnabled": true,
     "python.linting.flake8Enabled": true,
     "python.linting.pylintUseMinimalCheckers": false,
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "/usr/local/bin/black",
+    "python.formatting.blackArgs": ["--skip-string-normalization"],
     "python.typeshedPaths": "/home/dob9601/repos2/typeshed",
     "coc.preferences.jumpCommand": "tab drop",
     "clangd.path": "/home/dob9601/.config/coc/extensions/coc-clangd-data/install/12.0.0/clangd_12.0.0/bin/clangd",
     "cSpell.userWords": [
         "philmnight"
     ],
+
+    "explorer.icon.enableNerdfont": true,
+    "explorer.icon.source": "nvim-web-devicons",
+
     "languageserver": {
         "haskell": {
             "command": "haskell-language-server-wrapper",
             "args": ["--lsp"],
             "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml", "hie.yaml"],
             "filetypes": ["haskell", "lhaskell"]
+        },
+        "cwl": {
+            "command": "benten-ls",
+            "filetypes": ["cwl"]
         }
     },
     "java.home": "/lib/jvm/java-11-openjdk",
