@@ -14,10 +14,9 @@ Plug 'hoob3rt/lualine.nvim'
 Plug 'alec-gibson/nvim-tetris'
 Plug 'seandewar/nvimesweeper'
 
-" aksdopask
-" aksdopask
 " Bazbuz
-" aksdopask
+" Bazbuz
+" Bazbuz
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
