@@ -1,4 +1,12 @@
 nvim:
+  pre_install:
+    - mkdir -p ~/Applications
+    - curl -sL -o /tmp/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    - tar -xvf /tmp/nvim.tar.gz
+    - rm /tmp/nvim.tar.gz
+    - mv /tmp/nvim-linux64 ~/Applications/nvim-linux64
+    - cd ~/.local/bin/
+    - ln -s ../../Applications/nvim-linux64/bin/nvim
   file: init.vim
   target: ~/.config/nvim/init.vim
 
@@ -15,9 +23,6 @@ kitty-theme:
   target: ~/.config/kitty/theme.conf
 
 fish:
-  pre_install:
-    - git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    - ~/.fzf/install
   file: config.fish
   target: ~/.config/fish/config.fish
   post_install:
