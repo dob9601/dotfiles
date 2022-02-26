@@ -307,7 +307,7 @@ nnoremap <del> "_x
 nnoremap x "_x
 
 set scrolloff=10
-
+set sidescrolloff=10
 "------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '▏'
