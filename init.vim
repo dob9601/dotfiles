@@ -14,11 +14,6 @@ Plug 'hoob3rt/lualine.nvim'
 Plug 'alec-gibson/nvim-tetris'
 Plug 'seandewar/nvimesweeper'
 
-" Bazbuz
-" ioasd
-" Bazbuz
-" ioasd
-" Bazbuz
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
@@ -32,13 +27,12 @@ Plug 'deris/vim-shot-f'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/git-messenger.vim'
+Plug 'rhysd/conflict-marker.vim'
 
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
 
 " Start page
-" Plug 'mhinz/vim-startify'
-" Plug 'startup-nvim/startup.nvim'
 Plug 'goolord/alpha-nvim'
 
 " Icons
@@ -214,6 +208,12 @@ highlight GitGutterChangeDeleteLineNr guifg=lightred
 " Git Messenger
 let g:git_messenger_no_default_mappings = v:true
 nnoremap <silent><C-g> :GitMessenger<CR>
+
+highlight ConflictMarkerBegin guibg=#2f7366
+highlight ConflictMarkerOurs guibg=#2e5049
+highlight ConflictMarkerTheirs guibg=#344f69
+highlight ConflictMarkerEnd guibg=#2f628e
+highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
 
 " ----------------- Start Screen -----------------
 
