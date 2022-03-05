@@ -10,10 +10,23 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
+" JSX
+Plug 'maxmellon/vim-jsx-pretty'
+
 " ???
 Plug 'alec-gibson/nvim-tetris'
 Plug 'seandewar/nvimesweeper'
 
+" Bazbuz
+" Doer
+" Bazbuz
+" Doer
+" Bazbuz
+
+Plug 'tpope/vim-sleuth'
+
+" Don't break layout when closing 
+Plug 'moll/vim-bbye'
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
@@ -27,12 +40,13 @@ Plug 'deris/vim-shot-f'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/git-messenger.vim'
-Plug 'rhysd/conflict-marker.vim'
 
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
 
 " Start page
+" Plug 'mhinz/vim-startify'
+" Plug 'startup-nvim/startup.nvim'
 Plug 'goolord/alpha-nvim'
 
 " Icons
@@ -89,6 +103,8 @@ set splitbelow
 set splitright
 
 set updatetime=300
+
+set smartindent autoindent cindent
 
 " Speedy insert escape
 imap jj <esc>d2h
@@ -176,7 +192,8 @@ endfunction
 " -------------------- Bufferline ------------------
 
 nnoremap <silent><Leader>b :BufferLinePick<CR>
-nnoremap <silent><A-b>d :bd<CR>
+nnoremap <silent><Leader>d :BufferLinePickDelete<CR>
+nnoremap <silent><A-b>d :Bdelete<CR>
 nnoremap <silent><A-b>n :BufferLineCycleNext<CR>
 nnoremap <silent><A-b>p :BufferLineCyclePrev<CR>
 
@@ -185,7 +202,8 @@ require("bufferline").setup {
     options = {
         diagnostics = "coc",
         separator_style = "slant",
-        always_show_bufferline = false
+        always_show_bufferline = false,
+        close_command = "Bdelete %d"
     }
 }
 EOF
@@ -208,12 +226,6 @@ highlight GitGutterChangeDeleteLineNr guifg=lightred
 " Git Messenger
 let g:git_messenger_no_default_mappings = v:true
 nnoremap <silent><C-g> :GitMessenger<CR>
-
-highlight ConflictMarkerBegin guibg=#2f7366
-highlight ConflictMarkerOurs guibg=#2e5049
-highlight ConflictMarkerTheirs guibg=#344f69
-highlight ConflictMarkerEnd guibg=#2f628e
-highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
 
 " ----------------- Start Screen -----------------
 
@@ -280,7 +292,8 @@ let g:ale_linters = {
     \ 'python': [],
     \ 'haskell': [],
     \ 'rust': [],
-    \ 'typescript': []
+    \ 'typescript': [],
+    \ 'typescriptreact': []
     \}
 
 " Django
@@ -308,6 +321,7 @@ nnoremap x "_x
 
 set scrolloff=10
 set sidescrolloff=10
+
 "------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '▏'
@@ -398,8 +412,7 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
   indent = {
-    enable = true
+    enable = false
   }
 }
 EOF
-
