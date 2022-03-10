@@ -7,6 +7,9 @@ call plug#begin('~/.vim/plugged')
 " Autocompletion - CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+" better JSX support
+Plug 'maxmellon/vim-jsx-pretty'
+
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
