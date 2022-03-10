@@ -10,23 +10,15 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
-" JSX
-Plug 'maxmellon/vim-jsx-pretty'
+" Venn
+Plug 'jbyuki/venn.nvim'
 
 " ???
 Plug 'alec-gibson/nvim-tetris'
 Plug 'seandewar/nvimesweeper'
 
-" Bazbuz
-" Doer
-" Bazbuz
-" Doer
-" Bazbuz
-
+" Infer indents
 Plug 'tpope/vim-sleuth'
-
-" Don't break layout when closing 
-Plug 'moll/vim-bbye'
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
@@ -40,6 +32,7 @@ Plug 'deris/vim-shot-f'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/git-messenger.vim'
+Plug 'rhysd/conflict-marker.vim'
 
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
@@ -48,6 +41,9 @@ Plug 'preservim/nerdcommenter'
 " Plug 'mhinz/vim-startify'
 " Plug 'startup-nvim/startup.nvim'
 Plug 'goolord/alpha-nvim'
+
+" Don't break layout when closing 
+Plug 'moll/vim-bbye'
 
 " Icons
 Plug 'ryanoasis/vim-devicons'
@@ -104,8 +100,6 @@ set splitright
 
 set updatetime=300
 
-set smartindent autoindent cindent
-
 " Speedy insert escape
 imap jj <esc>d2h
 
@@ -114,11 +108,17 @@ set inccommand=split
 "
 " Enable mouse support
 set mouse=a
-"
+
+
+" Make cc and S correctly go to the right indent
+nnoremap cc ddko
+nnoremap S ddko
+
 " Default to using the system clipboard
 set clipboard=unnamedplus
 
 autocmd BufNewFile,BufRead *.cwl setlocal filetype=cwl syntax=yaml
+autocmd BufNewFile,BufRead *.md setlocal linebreak wrap
 autocmd BufNewFile,BufRead *.html.tera setlocal syntax=htmldjango
 autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
 autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
@@ -133,9 +133,56 @@ let g:sonokai_style = 'andromeda'
 let g:sonokai_enable_italic = 1
 
 " Material
-let g:material_style = 'deep ocean'
+lua << EOF
+vim.g.material_style = "deep ocean"
 
-colorscheme sonokai
+require('material').setup({
+
+	contrast = {
+		sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
+		floating_windows = false, -- Enable contrast for floating windows
+		line_numbers = false, -- Enable contrast background for line numbers
+		sign_column = false, -- Enable contrast background for the sign column
+		cursor_line = false, -- Enable darker background for the cursor line
+		non_current_windows = false, -- Enable darker background for non-current windows
+		popup_menu = false, -- Enable lighter background for the popup menu
+	},
+
+	italics = {
+		comments = true, -- Enable italic comments
+		keywords = true, -- Enable italic keywords
+		functions = false, -- Enable italic functions
+		strings = true, -- Enable italic strings
+		variables = false -- Enable italic variables
+	},
+
+	contrast_filetypes = { -- Specify which filetypes get the contrasted (darker) background
+		"terminal", -- Darker terminal background
+		"packer", -- Darker packer background
+		"qf" -- Darker qf list background
+	},
+
+	high_visibility = {
+		lighter = false, -- Enable higher contrast text for lighter style
+		darker = true -- Enable higher contrast text for darker style
+	},
+
+	disable = {
+		borders = false, -- Disable borders between verticaly split windows
+		background = false, -- Prevent the theme from setting the background (NeoVim then uses your teminal background)
+		term_colors = false, -- Prevent the theme from setting terminal colors
+		eob_lines = false -- Hide the end-of-buffer lines
+	},
+
+	lualine_style = "stealth", -- Lualine style ( can be 'stealth' or 'default' )
+
+	async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
+
+	custom_highlights = {} -- Overwrite highlights with your own
+})
+EOF
+
+colorscheme material
 
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
@@ -146,7 +193,7 @@ let g:coc_global_extensions = [
     \ 'coc-html', 'coc-explorer', 'coc-yaml',
     \ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
     \ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css',
-    \ 'coc-java']
+    \ 'coc-java', 'coc-marketplace']
 
 inoremap <silent><expr> <c-space> coc#refresh()
 " Tab stuff
@@ -204,8 +251,63 @@ require("bufferline").setup {
         separator_style = "slant",
         always_show_bufferline = false,
         close_command = "Bdelete %d"
+    },
+
+    groups = {
+        options = {
+            toggle_hidden_on_enter = true -- when you re-enter a hidden group this options re-opens that group so the buffer is visible
+        },
+        items = {
+            {
+                name = "Tests", -- Mandatory
+                highlight = {gui = "underline", guisp = "blue"}, -- Optional
+                priority = 2, -- determines where it will appear relative to other groups (Optional)
+                icon = "", -- Optional
+                matcher = function(buf) -- Mandatory
+                    return buf.filename:match('%_test') or buf.filename:match('%_spec')
+                end,
+            },
+            {
+                name = "Docs",
+                highlight = {gui = "undercurl", guisp = "green"},
+                auto_close = false,  -- whether or not close this group if it doesn't contain the current buffer
+                matcher = function(buf)
+                    return buf.filename:match('%.md') or buf.filename:match('%.txt')
+                end,
+                separator = { -- Optional
+                style = require('bufferline.groups').separator.tab
+                },
+            }
+        }
     }
 }
+
+EOF
+
+" ---------------------- Venn ----------------------
+
+lua << EOF
+ -- venn.nvim: enable or disable keymappings
+function _G.Toggle_venn()
+    local venn_enabled = vim.inspect(vim.b.venn_enabled)
+    if venn_enabled == "nil" then
+        vim.b.venn_enabled = true
+        vim.cmd[[setlocal ve=all]]
+        -- draw a line on HJKL keystokes
+        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+        -- draw a box by pressing "f" with visual selection
+        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+    else
+        vim.cmd[[setlocal ve=]]
+        vim.cmd[[mapclear <buffer>]]
+        vim.b.venn_enabled = nil
+    end
+end
+-- toggle keymappings for venn using <leader>v
+vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true, silent = true })
 EOF
 
 " ----------------------- Git ----------------------
@@ -227,13 +329,19 @@ highlight GitGutterChangeDeleteLineNr guifg=lightred
 let g:git_messenger_no_default_mappings = v:true
 nnoremap <silent><C-g> :GitMessenger<CR>
 
+highlight ConflictMarkerBegin guibg=#2f7366
+highlight ConflictMarkerOurs guibg=#2e5049
+highlight ConflictMarkerTheirs guibg=#344f69
+highlight ConflictMarkerEnd guibg=#2f628e
+highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
+
 " ----------------- Start Screen -----------------
 
-lua << EOF
-local io = require "io"
-local handle = assert(io.popen('bash -c history', 'r'))
-print(assert(handle:read('*a')))
-EOF
+"lua << EOF
+"local io = require "io"
+"local handle = assert(io.popen('bash -c history', 'r'))
+"print(assert(handle:read('*a')))
+"EOF
 
 " Cursed hack to disable statusline completely for alpha buffer
 autocmd BufEnter * set laststatus=2
@@ -306,8 +414,7 @@ set number " Show line numbers
 
 set signcolumn=yes:1
 
-runtime mswin.vim " Enable mswin style bindings
-nnoremap <C-s> :w<CR>
+runtime mswin.vim
 
 tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
 
@@ -320,29 +427,42 @@ nnoremap <del> "_x
 nnoremap x "_x
 
 set scrolloff=10
-set sidescrolloff=10
 
 "------------------ Indent Line ----------------- 
 
 let g:indentLine_char = '▏'
-set colorcolumn=9999999 " Workaround to fix bug with nvim highlighting
+" set colorcolumn=9999 " Workaround to fix bug with nvim highlighting,
+" disabled - bug no longer present?
 let g:indentLine_fileTypeExclude = ['startify', 'help', 'startup', 'alpha']
 
 "------------------- Telescope ------------------ 
 
 nnoremap <A-p> :Telescope<CR>
-nnoremap <silent> <C-p> :<C-u>Telescope find_files<CR>
+nnoremap <A-f> :Telescope live_grep<CR>
+nnoremap <silent> <C-p> :Telescope find_files<CR>
 
 lua << EOF
 local actions = require("telescope.actions")
+local custom_actions = {}
+
+function custom_actions.send_selected_to_qflist(prompt_bufnr)
+    actions.send_selected_to_qflist(prompt_bufnr)
+    actions.open_qflist()
+end
+
 require('telescope').setup {
     defaults = {
         file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' },
         initial_mode = 'insert',
         mappings = {
             i = {
-                ["<esc>"] = actions.close
-            }
+                ["<esc>"] = actions.close,
+
+                ["<C-w>"] = custom_actions.send_selected_to_qflist,
+            },
+            n = {
+                ["<C-w>"] = custom_actions.send_selected_to_qflist,
+            },
         }
     },
     pickers = {
@@ -362,7 +482,7 @@ EOF
 lua << EOF
 require('lualine').setup({
     options = {
-        theme = 'sonokai',
+        theme = 'auto',
         disabled_filetypes = {'alpha'}
     },
 
@@ -401,18 +521,15 @@ EOF
 lua << EOF
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  ignore_install = { }, -- List of parsers to ignore installing
+  ignore_install = { "javascript" }, -- List of parsers to ignore installing
   highlight = {
     enable = true,              -- false will disable the whole extension
-    disable = { "css" },  -- list of language that will be disabled
+    disable = {  },  -- list of language that will be disabled
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
-  indent = {
-    enable = false
-  }
 }
 EOF
