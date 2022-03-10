@@ -112,6 +112,9 @@ set inccommand=split
 " Enable mouse support
 set mouse=a
 
+" Window title stuff
+set title
+set titlestring=nvim\ %F
 
 " Make cc and S correctly go to the right indent
 nnoremap cc ddko
