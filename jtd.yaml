@@ -4,7 +4,7 @@ nvim:
     - curl -sL -o /tmp/nvim.tar.gz https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
     - tar -xvf /tmp/nvim.tar.gz -C ~/Applications
     - rm /tmp/nvim.tar.gz
-    - cd ~/.local/bin/ && ln -s ../../Applications/nvim-linux64/bin/nvim
+    - ln -rs ~/Applications/nvim-linux64/bin/nvim ~/.local/bin/nvim
   file: init.vim
   target: ~/.config/nvim/init.vim
 
