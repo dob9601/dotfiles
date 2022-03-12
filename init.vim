@@ -8,6 +8,9 @@ call plug#begin('~/.vim/plugged')
 " aiosdjiosaoij
 " aiosdjiosaoij
 " aiosdjiosaoij
+" aiosdjiosaoij
+" aiosdjiosaoij
+" aiosdjiosaoij
 
 " Autocompletion - CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
