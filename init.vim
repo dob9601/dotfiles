@@ -4,8 +4,6 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" I wonder if JTD sync is working again
-
 " Autocompletion - CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
