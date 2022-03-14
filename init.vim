@@ -4,16 +4,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" I wonder if JTD sync is working again
-" aiosdjiosaoij
-" aiosdjiosaoij
-" aiosdjiosaoij
-" aiosdjiosaoij
-" aiosdjiosaoij
-" aiosdjiosaoij
-
-" Autocompletion - CoC
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Language server
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/nvim-lsp-installer'
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 
 " better JSX support
 Plug 'maxmellon/vim-jsx-pretty'
@@ -77,7 +72,6 @@ Plug 'folke/todo-comments.nvim'
 
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'fannheyward/telescope-coc.nvim'
 
 " Ron highlighting
 Plug 'ron-rs/ron.vim'
@@ -128,6 +122,8 @@ set titlestring=nvim\ %F
 nnoremap cc ddko
 nnoremap S ddko
 
+autocmd TermOpen * setlocal scl=no nonumber
+
 " Default to using the system clipboard
 set clipboard=unnamedplus
 
@@ -158,7 +154,7 @@ require('material').setup({
 		line_numbers = false, -- Enable contrast background for line numbers
 		sign_column = false, -- Enable contrast background for the sign column
 		cursor_line = false, -- Enable darker background for the cursor line
-		non_current_windows = true, -- Enable darker background for non-current windows
+		non_current_windows = false, -- Enable darker background for non-current windows
 		popup_menu = false, -- Enable lighter background for the popup menu
 	},
 
@@ -178,7 +174,7 @@ require('material').setup({
 
 	high_visibility = {
 		lighter = false, -- Enable higher contrast text for lighter style
-		darker = true -- Enable higher contrast text for darker style
+		darker = false -- Enable higher contrast text for darker style
 	},
 
 	disable = {
@@ -201,54 +197,114 @@ colorscheme material
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
 
+" New lsp stuff
+let g:coq_settings = { 'auto_start': 'shut-up' }
+
+lua << EOF
+-- Mappings.
+-- See `:help vim.diagnostic.*` for documentation on any of the below functions
+local opts = { noremap=true, silent=true }
+vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+end
+
+local lsp_installer = require("nvim-lsp-installer")
+local coq = require("coq")
+
+-- Register a handler that will be called for each installed server when it's ready (i.e. when installation is finished
+-- or if the server is already installed).
+lsp_installer.on_server_ready(function(server)
+    local opts = {
+        on_attach = on_attach,
+        flags = {
+            debounce_text_changes = 150
+        }
+    }
+
+    -- (optional) Customize the options passed to the server
+    -- if server.name == "tsserver" then
+    --     opts.root_dir = function() ... end
+    -- end
+
+    -- This setup() function will take the provided server configuration and decorate it with the necessary properties
+    -- before passing it onwards to lspconfig.
+    -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+    server:setup(coq.lsp_ensure_capabilities(opts))
+end)
+
+EOF
 " ----------------------- Coc ----------------------
-let g:coc_global_extensions = [
-    \ 'coc-yank', 'coc-snippets', 'coc-pairs',
-    \ 'coc-html', 'coc-explorer', 'coc-yaml',
-    \ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
-    \ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css',
-    \ 'coc-java', 'coc-marketplace']
+"let g:coc_global_extensions = [
+    "\ 'coc-yank', 'coc-snippets', 'coc-pairs',
+    "\ 'coc-html', 'coc-explorer', 'coc-yaml',
+    "\ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
+    "\ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css',
+    "\ 'coc-java', 'coc-marketplace']
 
-inoremap <silent><expr> <c-space> coc#refresh()
-" Tab stuff
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"inoremap <silent><expr> <c-space> coc#refresh()
+"" Tab stuff
+"inoremap <silent><expr> <TAB>
+      "\ pumvisible() ? "\<C-n>" :
+      "\ <SID>check_back_space() ? "\<TAB>" :
+      "\ coc#refresh()
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-let g:coc_snippet_next = '<tab>'
+"let g:coc_snippet_next = '<tab>'
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+"function! s:check_back_space() abort
+  "let col = col('.') - 1
+  "return !col || getline('.')[col - 1]  =~# '\s'
+"endfunction
 
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+            "\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-nnoremap <Leader>p :CocCommand<CR>
-nnoremap <Leader>f :call CocAction('format')<CR>
-nnoremap <Leader><Leader> :CocAction<CR>
+"nnoremap <Leader>p :CocCommand<CR>
+"nnoremap <Leader>f :call CocAction('format')<CR>
+"nnoremap <Leader><Leader> :CocAction<CR>
 
-nmap <Leader>rn <Plug>(coc-rename)
-nmap <silent>gd <Plug>(coc-definition)
-nmap <silent>gr <Plug>(coc-references)
+"nmap <Leader>rn <Plug>(coc-rename)
+"nmap <silent>gd <Plug>(coc-definition)
+"nmap <silent>gr <Plug>(coc-references)
 
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+"nmap <silent> [g <Plug>(coc-diagnostic-prev)
+"nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-nnoremap <silent> <c-K> :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
+"nnoremap <silent> <c-K> :call <SID>show_documentation()<CR>
+"function! s:show_documentation()
+  "if (index(['vim','help'], &filetype) >= 0)
+    "execute 'h '.expand('<cword>')
+  "elseif (coc#rpc#ready())
+    "call CocActionAsync('doHover')
+  "else
+    "execute '!' . &keywordprg . " " . expand('<cword>')
+  "endif
+"endfunction
 
 " -------------------- Bufferline ------------------
 
@@ -488,7 +544,6 @@ require('telescope').setup {
         }
     }
 }
-require('telescope').load_extension('coc')
 EOF
 
 "-------------------- Lualine ------------------- 
