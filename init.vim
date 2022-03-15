@@ -7,8 +7,12 @@ call plug#begin('~/.vim/plugged')
 " Language server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
+Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+
+" Bracket closing
+Plug 'windwp/nvim-autopairs'
 
 " better JSX support
 Plug 'maxmellon/vim-jsx-pretty'
@@ -118,10 +122,6 @@ set mouse=a
 set title
 set titlestring=nvim\ %F
 
-" Make cc and S correctly go to the right indent
-nnoremap cc ddko
-nnoremap S ddko
-
 autocmd TermOpen * setlocal scl=no nonumber
 
 " Default to using the system clipboard
@@ -147,7 +147,6 @@ lua << EOF
 vim.g.material_style = "deep ocean"
 
 require('material').setup({
-
 	contrast = {
 		sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
 		floating_windows = false, -- Enable contrast for floating windows
@@ -190,6 +189,8 @@ require('material').setup({
 
 	custom_highlights = {} -- Overwrite highlights with your own
 })
+
+require('nvim-autopairs').setup{}
 EOF
 
 colorscheme material
@@ -205,8 +206,8 @@ lua << EOF
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
 vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+vim.api.nvim_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+vim.api.nvim_set_keymap('n', ']g', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
 -- Use an on_attach function to only map the following keys
@@ -257,54 +258,20 @@ lsp_installer.on_server_ready(function(server)
 end)
 
 EOF
+
+" Highlight yank
+augroup highlight_yank
+    autocmd!
+    au TextYankPost * silent! lua vim.highlight.on_yank { higroup='IncSearch', timeout=500 }
+augroup END
+
 " ----------------------- Coc ----------------------
 "let g:coc_global_extensions = [
-    "\ 'coc-yank', 'coc-snippets', 'coc-pairs',
-    "\ 'coc-html', 'coc-explorer', 'coc-yaml',
-    "\ 'coc-tsserver', 'coc-sh', 'coc-rust-analyzer',
-    "\ 'coc-pyright', 'coc-json', 'coc-docker', 'coc-css',
-    "\ 'coc-java', 'coc-marketplace']
-
-"inoremap <silent><expr> <c-space> coc#refresh()
-"" Tab stuff
-"inoremap <silent><expr> <TAB>
-      "\ pumvisible() ? "\<C-n>" :
-      "\ <SID>check_back_space() ? "\<TAB>" :
-      "\ coc#refresh()
-"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-"let g:coc_snippet_next = '<tab>'
-
-"function! s:check_back_space() abort
-  "let col = col('.') - 1
-  "return !col || getline('.')[col - 1]  =~# '\s'
-"endfunction
-
-"inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-            "\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-"nnoremap <Leader>p :CocCommand<CR>
-"nnoremap <Leader>f :call CocAction('format')<CR>
-"nnoremap <Leader><Leader> :CocAction<CR>
-
-"nmap <Leader>rn <Plug>(coc-rename)
-"nmap <silent>gd <Plug>(coc-definition)
-"nmap <silent>gr <Plug>(coc-references)
-
-"nmap <silent> [g <Plug>(coc-diagnostic-prev)
-"nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-"nnoremap <silent> <c-K> :call <SID>show_documentation()<CR>
-"function! s:show_documentation()
-  "if (index(['vim','help'], &filetype) >= 0)
-    "execute 'h '.expand('<cword>')
-  "elseif (coc#rpc#ready())
-    "call CocActionAsync('doHover')
-  "else
-    "execute '!' . &keywordprg . " " . expand('<cword>')
-  "endif
-"endfunction
+    "\,, 'coc-pairs',
+    "\, 'coc-explorer',,
+    "\,,,
+    "\,,,,
+    "\,]
 
 " -------------------- Bufferline ------------------
 
@@ -317,7 +284,7 @@ nnoremap <silent><A-b>p :BufferLineCyclePrev<CR>
 lua << EOF
 require("bufferline").setup {
     options = {
-        diagnostics = "coc",
+        diagnostics = "nvim_lsp",
         separator_style = "slant",
         always_show_bufferline = false,
         close_command = "Bdelete %d"
@@ -451,7 +418,7 @@ dashboard.section.buttons.val = {
     dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
     dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
     dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
-    dashboard.button( "s", "  Settings" , ":e $MYVIMRC | vsplit | CocConfig<CR> | :wincmd p<CR>"),
+    dashboard.button( "s", "  Settings" , ":e $MYVIMRC<CR>"),
     dashboard.button( "q", "  Quit", ":qa<CR>"),
 }
 
@@ -562,19 +529,25 @@ require('lualine').setup({
                 'branch',
                 icon = ''
             },
-            { 'diagnostics', sources = {'coc', 'ale'} },
+            { 'diagnostics', sources = {'nvim_lsp', 'nvim_diagnostic', 'ale'} },
             {
                 'diff',
                 symbols = {added = ' ', modified = ' ', removed = ' '},
             }
         },
-        lualine_c = {'g:coc_status', 'filename'},
+        lualine_c = {'os.date("%l:%M %p")', 'require("lsp-status").status()', 'filename'},
         lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
         lualine_z = {'location'}
     },
-
     extensions = {'fugitive'}
+})
+
+-- FIXME: Show lsp status
+require('lsp-status').config({
+    current_function = true,
+    show_filename = true,
+    diagnostics = false,
 })
 EOF
 
