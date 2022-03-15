@@ -10,9 +10,13 @@ Plug 'williamboman/nvim-lsp-installer'
 Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+Plug 'folke/trouble.nvim'
 
 " Bracket closing
 Plug 'windwp/nvim-autopairs'
+
+" Don't shift windows when opening other panes
+Plug 'luukvbaal/stabilize.nvim'
 
 " better JSX support
 Plug 'maxmellon/vim-jsx-pretty'
@@ -131,7 +135,7 @@ autocmd BufNewFile,BufRead *.cwl setlocal filetype=cwl syntax=yaml
 autocmd BufNewFile,BufRead *.md setlocal linebreak wrap
 autocmd BufNewFile,BufRead *.html.tera setlocal syntax=htmldjango
 autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
-autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
+autocmd BufNewFile,BufRead *.awg.* setlocal filetype=yaml
 
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -144,17 +148,17 @@ let g:sonokai_enable_italic = 1
 
 " Material
 lua << EOF
-vim.g.material_style = "deep ocean"
+vim.g.material_style = "darker"
 
 require('material').setup({
 	contrast = {
-		sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
-		floating_windows = false, -- Enable contrast for floating windows
+		sidebars = true, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
+		floating_windows = true, -- Enable contrast for floating windows
 		line_numbers = false, -- Enable contrast background for line numbers
 		sign_column = false, -- Enable contrast background for the sign column
 		cursor_line = false, -- Enable darker background for the cursor line
-		non_current_windows = false, -- Enable darker background for non-current windows
-		popup_menu = false, -- Enable lighter background for the popup menu
+		non_current_windows = true, -- Enable darker background for non-current windows
+		popup_menu = true, -- Enable lighter background for the popup menu
 	},
 
 	italics = {
@@ -180,10 +184,10 @@ require('material').setup({
 		borders = false, -- Disable borders between verticaly split windows
 		background = false, -- Prevent the theme from setting the background (NeoVim then uses your teminal background)
 		term_colors = false, -- Prevent the theme from setting terminal colors
-		eob_lines = false -- Hide the end-of-buffer lines
+		eob_lines = true -- Hide the end-of-buffer lines
 	},
 
-	lualine_style = "stealth", -- Lualine style ( can be 'stealth' or 'default' )
+	lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
 
 	async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
 
@@ -257,6 +261,10 @@ lsp_installer.on_server_ready(function(server)
     server:setup(coq.lsp_ensure_capabilities(opts))
 end)
 
+require("trouble").setup {
+    auto_open = true
+}
+require("stabilize").setup()
 EOF
 
 " Highlight yank
@@ -519,6 +527,8 @@ lua << EOF
 require('lualine').setup({
     options = {
         theme = 'auto',
+        component_separators = { left = '', right = '' },
+        section_separators = { left = '', right = '' },
         disabled_filetypes = {'alpha'}
     },
 
