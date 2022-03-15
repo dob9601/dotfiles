@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 " Language server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-Plug 'nvim-lua/lsp-status.nvim'
+Plug 'arkav/lualine-lsp-progress'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'folke/trouble.nvim'
@@ -85,7 +85,7 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'ron-rs/ron.vim'
 
 " Indent guides
-Plug 'yggdroot/indentline'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 " UNIX Helper
 Plug 'tpope/vim-eunuch'
@@ -126,10 +126,38 @@ set mouse=a
 set title
 set titlestring=nvim\ %F
 
+set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
+
+set nowrap " Disable text-wrap
+set number " Show line numbers
+
+set signcolumn=yes:1
+
+runtime mswin.vim
+
+tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
+
+set tabstop=4 shiftwidth=4 expandtab
+
+set cursorline " Make cursor easier to find
+
+" Make the delete button not yank
+nnoremap <del> "_x
+nnoremap x "_x
+
+set scrolloff=10
+
+
 autocmd TermOpen * setlocal scl=no nonumber
 
 " Default to using the system clipboard
 set clipboard=unnamedplus
+
+" Highlight yanked text
+augroup highlight_yank
+    autocmd!
+    au TextYankPost * silent! lua vim.highlight.on_yank { higroup='IncSearch', timeout=500 }
+augroup END
 
 autocmd BufNewFile,BufRead *.cwl setlocal filetype=cwl syntax=yaml
 autocmd BufNewFile,BufRead *.md setlocal linebreak wrap
@@ -139,7 +167,7 @@ autocmd BufNewFile,BufRead *.awg.* setlocal filetype=yaml
 
 let g:python3_host_prog = '/usr/bin/python3'
 
-" => Colorscheme
+" ----------------- Colourscheme -----------------
 set termguicolors
 
 " Sonokai
@@ -198,11 +226,10 @@ require('nvim-autopairs').setup{}
 EOF
 
 colorscheme material
-
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
 
-" New lsp stuff
+" -----------------      LSP     -----------------
 let g:coq_settings = { 'auto_start': 'shut-up' }
 
 lua << EOF
@@ -264,22 +291,13 @@ end)
 require("trouble").setup {
     auto_open = true
 }
-require("stabilize").setup()
 EOF
 
-" Highlight yank
-augroup highlight_yank
-    autocmd!
-    au TextYankPost * silent! lua vim.highlight.on_yank { higroup='IncSearch', timeout=500 }
-augroup END
-
-" ----------------------- Coc ----------------------
-"let g:coc_global_extensions = [
-    "\,, 'coc-pairs',
-    "\, 'coc-explorer',,
-    "\,,,
-    "\,,,,
-    "\,]
+" -------------------- Stabilize -------------------
+"
+lua << EOF
+require("stabilize").setup()
+EOF
 
 " -------------------- Bufferline ------------------
 
@@ -296,6 +314,12 @@ require("bufferline").setup {
         separator_style = "slant",
         always_show_bufferline = false,
         close_command = "Bdelete %d"
+    },
+
+    highlights = {
+        fill = {
+            guibg = '#FFFFFF',
+        },
     },
 
     groups = {
@@ -449,36 +473,15 @@ let g:ale_linters = {
     \ 'typescriptreact': []
     \}
 
-" Django
-set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
-
-" --------------
-
-set nowrap " Disable text-wrap
-set number " Show line numbers
-
-set signcolumn=yes:1
-
-runtime mswin.vim
-
-tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
-
-set tabstop=4 shiftwidth=4 expandtab
-
-set cursorline " Make cursor easier to find
-
-" Make the delete button not yank
-nnoremap <del> "_x
-nnoremap x "_x
-
-set scrolloff=10
-
 "------------------ Indent Line ----------------- 
 
-let g:indentLine_char = '▏'
-" set colorcolumn=9999 " Workaround to fix bug with nvim highlighting,
-" disabled - bug no longer present?
-let g:indentLine_fileTypeExclude = ['startify', 'help', 'startup', 'alpha']
+lua << EOF
+require("indent_blankline").setup {
+    space_char_blankline = " ",
+    show_current_context = true,
+    show_current_context_start = true,
+}
+EOF
 
 "------------------- Telescope ------------------ 
 
@@ -545,19 +548,30 @@ require('lualine').setup({
                 symbols = {added = ' ', modified = ' ', removed = ' '},
             }
         },
-        lualine_c = {'os.date("%l:%M %p")', 'require("lsp-status").status()', 'filename'},
+        lualine_c = {
+            'os.date("%l:%M %p")',
+            {
+                'lsp_progress',
+                display_components = { 'lsp_client_name', 'spinner', { 'title', 'percentage', 'message' }},
+                timer = {
+                    progress_enddelay = 0,
+                    spinner = 80,
+                    lsp_client_name_enddelay = 1000
+                },
+                separators = {
+                    progress = '  '
+                },
+                spinner_symbols = {
+                    '▰▱▱▱▱', '▰▰▱▱▱', '▰▰▰▱▱', '▰▰▰▰▱', '▰▰▰▰▰'
+                },
+            },
+            'filename'
+        },
         lualine_x = {'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
         lualine_z = {'location'}
     },
     extensions = {'fugitive'}
-})
-
--- FIXME: Show lsp status
-require('lsp-status').config({
-    current_function = true,
-    show_filename = true,
-    diagnostics = false,
 })
 EOF
 
