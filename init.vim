@@ -7,10 +7,10 @@ call plug#begin('~/.vim/plugged')
 " Language server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-Plug 'arkav/lualine-lsp-progress'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'folke/trouble.nvim'
+Plug 'nvim-lua/lsp-status.nvim'
 
 " Bracket closing
 Plug 'windwp/nvim-autopairs'
@@ -43,10 +43,11 @@ Plug 'sainnhe/sonokai'
 Plug 'deris/vim-shot-f' 
 
 " Git wrappers
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-Plug 'rhysd/git-messenger.vim'
-Plug 'rhysd/conflict-marker.vim'
+Plug 'tpope/vim-fugitive' " General wrapper
+Plug 'airblade/vim-gitgutter' " Show changes in gutter
+Plug 'rhysd/git-messenger.vim' " Blame for current line
+Plug 'rhysd/conflict-marker.vim' " Merge conflicts
+Plug 'pwntester/octo.nvim' " GitHub
 
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
@@ -244,28 +245,57 @@ vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<C
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-  -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-  -- Mappings.
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    -- Mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+    if client.resolved_capabilities.document_highlight then
+        vim.cmd [[
+          hi! LspReferenceRead cterm=underline gui=underline
+          hi! LspReferenceText cterm=underline gui=underline
+          hi! LspReferenceWrite cterm=underline gui=underline
+          augroup lsp_document_highlight
+            autocmd! * <buffer>
+            autocmd! CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+            autocmd! CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+          augroup END
+        ]]
+    end
 end
 
 local lsp_installer = require("nvim-lsp-installer")
 local coq = require("coq")
+
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+
+local lsp_status = require("lsp-status")
+lsp_status.config({
+    component_separator = "  ",
+    diagnostics = false,
+    show_filename = false,
+    current_function = true,
+    status_symbol = ""
+})
+lsp_status.register_progress()
 
 -- Register a handler that will be called for each installed server when it's ready (i.e. when installation is finished
 -- or if the server is already installed).
@@ -289,14 +319,19 @@ lsp_installer.on_server_ready(function(server)
 end)
 
 require("trouble").setup {
-    auto_open = true
+    auto_open = true,
 }
 EOF
 
 " -------------------- Stabilize -------------------
 "
 lua << EOF
-require("stabilize").setup()
+require("stabilize").setup({
+    ignore = {
+        filetype = {},
+        buftype = {}
+    }
+})
 EOF
 
 " -------------------- Bufferline ------------------
@@ -404,6 +439,10 @@ highlight ConflictMarkerTheirs guibg=#344f69
 highlight ConflictMarkerEnd guibg=#2f628e
 highlight ConflictMarkerCommonAncestorsHunk guibg=#754a81
 
+lua << EOF
+require("octo").setup()
+EOF
+
 " ----------------- Start Screen -----------------
 
 "lua << EOF
@@ -480,6 +519,8 @@ require("indent_blankline").setup {
     space_char_blankline = " ",
     show_current_context = true,
     show_current_context_start = true,
+    filetype_exclude = {"alpha"},
+    char = "▏"
 }
 EOF
 
@@ -491,6 +532,7 @@ nnoremap <silent> <C-p> :Telescope find_files<CR>
 
 lua << EOF
 local actions = require("telescope.actions")
+local trouble = require("trouble.providers.telescope")
 local custom_actions = {}
 
 function custom_actions.send_selected_to_qflist(prompt_bufnr)
@@ -505,10 +547,11 @@ require('telescope').setup {
         mappings = {
             i = {
                 ["<esc>"] = actions.close,
-
+                ["<C-t>"] = trouble.open_with_trouble,
                 ["<C-w>"] = custom_actions.send_selected_to_qflist,
             },
             n = {
+                ["<C-t>"] = trouble.open_with_trouble,
                 ["<C-w>"] = custom_actions.send_selected_to_qflist,
             },
         }
@@ -550,21 +593,7 @@ require('lualine').setup({
         },
         lualine_c = {
             'os.date("%l:%M %p")',
-            {
-                'lsp_progress',
-                display_components = { 'lsp_client_name', 'spinner', { 'title', 'percentage', 'message' }},
-                timer = {
-                    progress_enddelay = 0,
-                    spinner = 80,
-                    lsp_client_name_enddelay = 1000
-                },
-                separators = {
-                    progress = '  '
-                },
-                spinner_symbols = {
-                    '▰▱▱▱▱', '▰▰▱▱▱', '▰▰▰▱▱', '▰▰▰▰▱', '▰▰▰▰▰'
-                },
-            },
+            'require("lsp-status").status()',
             'filename'
         },
         lualine_x = {'encoding', 'fileformat', 'filetype'},
