@@ -11,6 +11,7 @@ Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'folke/trouble.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
+Plug 'ray-x/lsp_signature.nvim'
 
 " Bracket closing
 Plug 'windwp/nvim-autopairs'
@@ -231,7 +232,10 @@ colorscheme material
 highlight EndOfBuffer guifg=bg
 
 " -----------------      LSP     -----------------
-let g:coq_settings = { 'auto_start': 'shut-up' }
+let g:coq_settings = {
+    \ 'auto_start': 'shut-up',
+    \ 'display.pum.fast_close': v:false
+    \ }
 
 lua << EOF
 -- Mappings.
@@ -263,6 +267,8 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+    require("lsp_signature").on_attach()
 
     if client.resolved_capabilities.document_highlight then
         vim.cmd [[
