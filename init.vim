@@ -250,19 +250,20 @@ local on_attach = function(client, bufnr)
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
+
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua require("telescope.builtin").lsp_definitions()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua require("telescope.builtin").lsp_implementations()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua require("telescope.builtin").lsp_type_definitions()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader><leader>', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader><leader>', '<cmd>lua require("telescope.builtin").lsp_code_actions()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
     require("lsp_signature").on_attach()
 
@@ -284,6 +285,7 @@ local lsp_installer = require("nvim-lsp-installer")
 
 vim.g.coq_settings = {
     auto_start = 'shut-up',
+    keymap = { recommended = false },
     clients = {
         buffers = {
             enabled = true,
@@ -303,6 +305,37 @@ vim.g.coq_settings = {
         },
     }
 }
+vim.api.nvim_set_keymap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<c-c>', [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<tab>', [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<s-tab>', [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
+
+local npairs = require('nvim-autopairs')
+npairs.setup({ map_bs = false, map_cr = false })
+
+_G.MUtils = {}
+
+MUtils.CR = function()
+  if vim.fn.pumvisible() ~= 0 then
+    if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
+      return npairs.esc('<c-y>')
+    else
+      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
+    end
+  else
+    return npairs.autopairs_cr()
+  end
+end
+vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
+
+MUtils.BS = function()
+  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
+    return npairs.esc('<c-e>') .. npairs.autopairs_bs()
+  else
+    return npairs.autopairs_bs()
+  end
+end
+vim.api.nvim_set_keymap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
 
 local coq = require("coq")
 
@@ -345,6 +378,7 @@ end)
 
 require("trouble").setup {
     auto_open = true,
+    auto_close = true,
 }
 EOF
 
@@ -355,7 +389,8 @@ require("stabilize").setup({
     ignore = {
         filetype = {},
         buftype = {}
-    }
+    },
+    nested = "QuickFixCmdPost,DiagnosticChanged *"
 })
 EOF
 
@@ -404,7 +439,7 @@ require("bufferline").setup {
                     return buf.filename:match('%.md') or buf.filename:match('%.txt')
                 end,
                 separator = { -- Optional
-                style = require('bufferline.groups').separator.tab
+                    style = require('bufferline.groups').separator.tab
                 },
             }
         }
@@ -567,6 +602,7 @@ end
 
 require('telescope').setup {
     defaults = {
+        prompt_prefix=" ",
         file_ignore_patterns = { 'node_modules', '__pycache__', '**/migrations', 'staticfiles', 'env', 'target' },
         initial_mode = 'insert',
         mappings = {
@@ -587,7 +623,31 @@ require('telescope').setup {
         },
         oldfiles = {
             theme = "ivy"
-        }
+        },
+        lsp_references = {
+            theme = "ivy",
+            layout_config = {
+                height = 10
+            }
+        },
+        lsp_code_actions = {
+            theme = "cursor"
+        },
+        lsp_range_code_actions = {
+            theme = "cursor"
+        },
+        lsp_implementations = {
+            theme = "ivy",
+            layout_config = {
+                height = 10
+            }
+        },
+        lsp_definitions = {
+            theme = "cursor",
+        },
+        lsp_type_definitions = {
+            theme = "cursor"
+        },
     }
 }
 EOF
