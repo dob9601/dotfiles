@@ -37,6 +37,7 @@ Plug 'seandewar/nvimesweeper'
 
 " Infer indents
 Plug 'tpope/vim-sleuth'
+Plug 'Vimjas/vim-python-pep8-indent'
 
 " Colourschemes
 Plug 'folke/tokyonight.nvim'
@@ -153,7 +154,7 @@ nnoremap x "_x
 
 set fillchars+=diff:╱
 
-set timeoutlen=350
+set timeoutlen=500
 
 set scrolloff=10
 
@@ -766,7 +767,7 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
   indent = {
-      enable = true
-  },
+      enable = false,
+  }
 }
 EOF
