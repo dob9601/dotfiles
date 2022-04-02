@@ -1,6 +1,5 @@
 .config:
   commit_prefix: "⚙ "
-  squash_commits: false
 
 nvim:
   pre_install:
