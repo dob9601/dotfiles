@@ -1,3 +1,4 @@
+" Foobar
 if &compatible
     set nocompatible               " Be iMproved
 endif
@@ -384,6 +385,7 @@ local servers = {
   "ltex",
   "spectral",
   "dockerls",
+  "vimls",
   "rust_analyzer"
 }
 
