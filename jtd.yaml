@@ -1,6 +1,3 @@
-.config:
-  commit_prefix: "⚙ "
-
 nvim:
   pre_install:
     - mkdir -p ~/Applications
