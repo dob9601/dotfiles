@@ -1,4 +1,3 @@
-" Foobar
 if &compatible
     set nocompatible               " Be iMproved
 endif
@@ -773,3 +772,5 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
+
+"foobar
