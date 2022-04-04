@@ -8,10 +8,6 @@ nvim:
   file: init.vim
   target: ~/.config/nvim/init.vim
 
-nvim-coc:
-  file: coc-settings.json
-  target: ~/.config/nvim/coc-settings.json
-
 kitty:
   file: kitty.conf
   target: ~/.config/kitty/kitty.conf
@@ -19,6 +15,10 @@ kitty:
 kitty-theme:
   file: theme.conf
   target: ~/.config/kitty/theme.conf
+
+tmux:
+  file: .tmux.conf
+  target: ~/.tmux.conf
 
 fish:
   file: config.fish
