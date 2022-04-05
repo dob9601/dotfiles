@@ -297,7 +297,8 @@ vim.g.coq_settings = {
     keymap = { recommended = false },
     display = {
 	pum = {
-	    kind_context = {" ❲", "❳"}
+	    kind_context = {" ❲", "❳"},
+	    fast_close = false,
 	},
 	preview = {
 	    border = "rounded"
@@ -305,6 +306,9 @@ vim.g.coq_settings = {
 	icons = {
 	    mode = "short",
 	}
+    },
+    limits = {
+	completion_auto_timeout = 0.15
     },
     clients = {
         buffers = {
@@ -317,7 +321,8 @@ vim.g.coq_settings = {
         },
         lsp = {
             enabled = true,
-            weight_adjust = 1.5
+            weight_adjust = 1.5,
+	    resolve_timeout = 0.12,
         },
         snippets = {
             enabled = true,
@@ -384,7 +389,6 @@ local servers = {
   "ltex",
   "spectral",
   "dockerls",
-  "vimls",
   "rust_analyzer"
 }
 
@@ -772,5 +776,3 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
-
-"foobar
