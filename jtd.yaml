@@ -17,6 +17,8 @@ kitty-theme:
   target: ~/.config/kitty/theme.conf
 
 tmux:
+  pre_install:
+    - git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   file: .tmux.conf
   target: ~/.tmux.conf
 
