@@ -1,3 +1,5 @@
+"FOOBAR
+
 if &compatible
     set nocompatible               " Be iMproved
 endif
