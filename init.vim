@@ -13,6 +13,9 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ray-x/lsp_signature.nvim'
 
+" Show current context
+Plug 'wellle/context.vim'
+
 " Show key combos
 Plug 'folke/which-key.nvim'
 
@@ -119,9 +122,6 @@ set splitbelow
 set splitright
 
 set updatetime=300
-
-" Speedy insert escape
-imap jj <esc>d2h
 
 " Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
 set inccommand=split
@@ -240,6 +240,9 @@ colorscheme material
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
 
+" -----------------    Context   -----------------
+inoremap <silent><A-c> <C-o>:ContextPeek<CR>
+
 " -----------------      LSP     -----------------
 
 lua << EOF
@@ -298,7 +301,7 @@ vim.g.coq_settings = {
     display = {
 	pum = {
 	    kind_context = {" ❲", "❳"},
-	    fast_close = false,
+	    fast_close = true,
 	},
 	preview = {
 	    border = "rounded"
@@ -308,7 +311,7 @@ vim.g.coq_settings = {
 	}
     },
     limits = {
-	completion_auto_timeout = 0.15
+	completion_auto_timeout = 0.12
     },
     clients = {
         buffers = {
