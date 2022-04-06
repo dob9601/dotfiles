@@ -1,5 +1,3 @@
-"FOOBAR
-
 if &compatible
     set nocompatible               " Be iMproved
 endif
@@ -243,7 +241,10 @@ colorscheme material
 highlight EndOfBuffer guifg=bg
 
 " -----------------    Context   -----------------
+let g:context_enabled = 0
+
 inoremap <silent><A-c> <C-o>:ContextPeek<CR>
+nnoremap <silent><A-c> :ContextPeek<CR>
 
 " -----------------      LSP     -----------------
 
