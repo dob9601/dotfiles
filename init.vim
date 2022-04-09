@@ -249,6 +249,12 @@ nnoremap <silent><A-c> :ContextPeek<CR>
 " -----------------      LSP     -----------------
 
 lua << EOF
+require("lsp_signature").setup({
+    doc_lines = 0,
+    toggle_key = "<A-g>",
+    zindex = 1
+})
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -279,8 +285,6 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader><leader>', '<cmd>lua require("telescope.builtin").lsp_code_actions()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-
-    require("lsp_signature").on_attach()
 
     if client.resolved_capabilities.document_highlight then
         vim.cmd [[
@@ -406,6 +410,18 @@ for _, name in pairs(servers) do
   end
 end
 
+local custom_server_opts = {
+  -- Provide settings that should only apply to the "eslintls" server
+  ["yamlls"] = function(opts)
+      opts.settings = {
+	  yaml = {
+	      schemas = {
+		  ["https://raw.githubusercontent.com/dob9601/jointhedots/fixup-schema/src/dotfile_schema.json"] = "/jtd.yaml"
+	      }
+	  }
+      }
+  end,
+}
 -- Register a handler that will be called for each installed server when it's ready (i.e. when installation is finished
 -- or if the server is already installed).
 lsp_installer.on_server_ready(function(server)
@@ -415,6 +431,10 @@ lsp_installer.on_server_ready(function(server)
             debounce_text_changes = 150
         }
     }
+
+    if custom_server_opts[server.name] then
+	custom_server_opts[server.name](opts)
+    end
 
     -- (optional) Customize the options passed to the server
     -- if server.name == "tsserver" then
@@ -743,7 +763,6 @@ require('lualine').setup({
             }
         },
         lualine_c = {
-            'os.date("%l:%M %p")',
             'require("lsp-status").status()',
             'filename'
         },
@@ -784,4 +803,4 @@ require'nvim-treesitter.configs'.setup {
 EOF
 
 " Yipee
-" Fuzball
+" Feetool
