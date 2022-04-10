@@ -1,6 +1,7 @@
 if &compatible
     set nocompatible               " Be iMproved
 endif
+" hahahae pic
 
 " Remote changes 
 call plug#begin('~/.vim/plugged')
@@ -16,6 +17,9 @@ Plug 'ray-x/lsp_signature.nvim'
 
 " Show current context
 Plug 'wellle/context.vim'
+
+" Discord
+Plug 'andweeb/presence.nvim'
 
 " Show key combos
 Plug 'folke/which-key.nvim'
@@ -335,12 +339,16 @@ vim.g.coq_settings = {
         lsp = {
             enabled = true,
             weight_adjust = 1.5,
-	    resolve_timeout = 0.12,
+            resolve_timeout = 0.12,
         },
         snippets = {
             enabled = true,
             weight_adjust = 1.9
         },
+        tags = {
+	    enabled = false,
+            weight_adjust = -1.5
+        }
     }
 }
 vim.api.nvim_set_keymap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
@@ -532,6 +540,15 @@ require("bufferline").setup {
 
 EOF
 
+" -------------------- Discord ---------------------
+lua << EOF
+require("presence"):setup({
+    buttons = {
+        { label = "GitHub Profile", url = "https://github.com/dob9601" },
+        { label = "jointhedots", url = "https://github.com/dob9601/jointhedots" },
+    },
+})
+EOF
 " ---------------------- Venn ----------------------
 
 lua << EOF
@@ -710,6 +727,9 @@ require('telescope').setup {
         find_files = {
             theme = "ivy"
         },
+        live_grep = {
+            theme = "ivy"
+        },
         oldfiles = {
             theme = "ivy"
         },
@@ -747,8 +767,6 @@ lua << EOF
 require('lualine').setup({
     options = {
         theme = 'auto',
-        component_separators = { left = '', right = '' },
-        section_separators = { left = '', right = '' },
         disabled_filetypes = {'alpha'}
     },
 
