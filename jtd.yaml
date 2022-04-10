@@ -1,5 +1,5 @@
 .config:
-  squash_commits: false
+  squash_commits: true
 
 nvim:
   pre_install:
