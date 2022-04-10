@@ -2,6 +2,7 @@ if &compatible
     set nocompatible               " Be iMproved
 endif
 
+" Remote changes 
 call plug#begin('~/.vim/plugged')
 
 " Language server
