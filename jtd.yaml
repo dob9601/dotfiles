@@ -25,7 +25,13 @@ tmux:
   file: .tmux.conf
   target: ~/.tmux.conf
 
+
 fish:
+  pre_install:
+    - yay -S --noconfirm fish
+    - curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+    - fisher install jorgebucaran/getopts.fish
+    - fisher install IlanCosman/tide@v5
   file: config.fish
   target: ~/.config/fish/config.fish
   post_install:
