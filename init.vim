@@ -3,7 +3,6 @@ if &compatible
 endif
 " hahahae pic
 
-" Remote changes 
 call plug#begin('~/.vim/plugged')
 
 " Language server
