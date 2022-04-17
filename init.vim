@@ -73,6 +73,9 @@ Plug 'goolord/alpha-nvim'
 " Don't break layout when closing 
 Plug 'moll/vim-bbye'
 
+" Notifications
+Plug 'rcarriga/nvim-notify'
+
 " Icons
 Plug 'ryanoasis/vim-devicons'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -187,62 +190,12 @@ let g:python3_host_prog = '/usr/bin/python3'
 " ----------------- Colourscheme -----------------
 set termguicolors
 
-" Sonokai
-let g:sonokai_style = 'andromeda'
-let g:sonokai_enable_italic = 1
+colorscheme tokyonight
 
-" Material
 lua << EOF
-vim.g.material_style = "darker"
-
-require('material').setup({
-	contrast = {
-		sidebars = true, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
-		floating_windows = true, -- Enable contrast for floating windows
-		line_numbers = false, -- Enable contrast background for line numbers
-		sign_column = false, -- Enable contrast background for the sign column
-		cursor_line = false, -- Enable darker background for the cursor line
-		non_current_windows = true, -- Enable darker background for non-current windows
-		popup_menu = true, -- Enable lighter background for the popup menu
-	},
-
-	italics = {
-		comments = true, -- Enable italic comments
-		keywords = true, -- Enable italic keywords
-		functions = false, -- Enable italic functions
-		strings = true, -- Enable italic strings
-		variables = false -- Enable italic variables
-	},
-
-	contrast_filetypes = { -- Specify which filetypes get the contrasted (darker) background
-		"terminal", -- Darker terminal background
-		"packer", -- Darker packer background
-		"qf" -- Darker qf list background
-	},
-
-	high_visibility = {
-		lighter = false, -- Enable higher contrast text for lighter style
-		darker = false -- Enable higher contrast text for darker style
-	},
-
-	disable = {
-		borders = false, -- Disable borders between verticaly split windows
-		background = false, -- Prevent the theme from setting the background (NeoVim then uses your teminal background)
-		term_colors = false, -- Prevent the theme from setting terminal colors
-		eob_lines = true -- Hide the end-of-buffer lines
-	},
-
-	lualine_style = "default", -- Lualine style ( can be 'stealth' or 'default' )
-
-	async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
-
-	custom_highlights = {} -- Overwrite highlights with your own
-})
-
 require('nvim-autopairs').setup{}
 EOF
 
-colorscheme material
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
 
@@ -537,6 +490,101 @@ require("bufferline").setup {
     }
 }
 
+EOF
+
+" --------------------- Notify ---------------------
+
+lua << EOF
+vim.notify = require("notify")
+
+-- Utility functions shared between progress reports for LSP and DAP
+
+local client_notifs = {}
+
+local function get_notif_data(client_id, token)
+ if not client_notifs[client_id] then
+   client_notifs[client_id] = {}
+ end
+
+ if not client_notifs[client_id][token] then
+   client_notifs[client_id][token] = {}
+ end
+
+ return client_notifs[client_id][token]
+end
+
+
+local spinner_frames = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" }
+
+local function update_spinner(client_id, token)
+ local notif_data = get_notif_data(client_id, token)
+
+ if notif_data.spinner then
+   local new_spinner = (notif_data.spinner + 1) % #spinner_frames
+   notif_data.spinner = new_spinner
+
+   notif_data.notification = vim.notify(nil, nil, {
+     hide_from_history = true,
+     icon = spinner_frames[new_spinner],
+     replace = notif_data.notification,
+   })
+
+   vim.defer_fn(function()
+     update_spinner(client_id, token)
+   end, 100)
+ end
+end
+
+local function format_title(title, client_name)
+ return client_name .. (#title > 0 and ": " .. title or "")
+end
+
+local function format_message(message, percentage)
+ return (percentage and percentage .. "%\t" or "") .. (message or "")
+end
+
+-- LSP integration
+-- Make sure to also have the snippet with the common helper functions in your config!
+
+vim.lsp.handlers["$/progress"] = function(_, result, ctx)
+ local client_id = ctx.client_id
+
+ local val = result.value
+
+ if not val.kind then
+   return
+ end
+
+ local notif_data = get_notif_data(client_id, result.token)
+
+ if val.kind == "begin" then
+   local message = format_message(val.message, val.percentage)
+
+   notif_data.notification = vim.notify(message, "info", {
+     title = format_title(val.title, vim.lsp.get_client_by_id(client_id).name),
+     icon = spinner_frames[1],
+     timeout = false,
+     hide_from_history = false,
+   })
+
+   notif_data.spinner = 1
+   update_spinner(client_id, result.token)
+ elseif val.kind == "report" and notif_data then
+   notif_data.notification = vim.notify(format_message(val.message, val.percentage), "info", {
+     replace = notif_data.notification,
+     hide_from_history = false,
+   })
+ elseif val.kind == "end" and notif_data then
+   notif_data.notification =
+     vim.notify(val.message and format_message(val.message) or "Complete", "info", {
+       icon = "",
+       replace = notif_data.notification,
+       timeout = 3000,
+     })
+
+   notif_data.spinner = nil
+ end
+end
 EOF
 
 " -------------------- Discord ---------------------
