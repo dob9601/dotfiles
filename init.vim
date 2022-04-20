@@ -17,6 +17,9 @@ Plug 'ray-x/lsp_signature.nvim'
 " Show current context
 Plug 'wellle/context.vim'
 
+" Targets
+Plug 'wellle/targets.vim'
+
 " Discord
 Plug 'andweeb/presence.nvim'
 
@@ -453,12 +456,6 @@ require("bufferline").setup {
         separator_style = "slant",
         always_show_bufferline = false,
         close_command = "Bdelete %d"
-    },
-
-    highlights = {
-        fill = {
-            guibg = '#FFFFFF',
-        },
     },
 
     groups = {
