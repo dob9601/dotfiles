@@ -14,6 +14,9 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ray-x/lsp_signature.nvim'
 
+" Neorg
+Plug 'nvim-neorg/neorg'
+
 " Show current context
 Plug 'wellle/context.vim'
 
@@ -201,7 +204,28 @@ EOF
 
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
-
+" -----------------     Norg     -----------------
+lua << EOF
+require('neorg').setup {
+    load = {
+        ["core.defaults"] = {},
+        ["core.norg.concealer"] = {},
+        ["core.norg.completion"] = {
+            config = {
+                engine = "coq"
+            }
+        },
+        ["core.norg.dirman"] = {
+            config = {
+                workspaces = {
+                    work = "~/notes/work",
+                    home = "~/notes/home",
+                }
+            }
+        }
+    }
+}
+EOF
 " -----------------    Context   -----------------
 let g:context_enabled = 0
 
@@ -697,6 +721,7 @@ dashboard.section.buttons.val = {
     dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
     dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
     dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
+    dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
     dashboard.button( "s", "  Settings" , ":e $MYVIMRC<CR>"),
     dashboard.button( "q", "  Quit", ":qa<CR>"),
 }
