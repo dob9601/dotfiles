@@ -210,11 +210,6 @@ require('neorg').setup {
     load = {
         ["core.defaults"] = {},
         ["core.norg.concealer"] = {},
-        ["core.norg.completion"] = {
-            config = {
-                engine = "coq"
-            }
-        },
         ["core.norg.dirman"] = {
             config = {
                 workspaces = {
