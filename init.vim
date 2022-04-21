@@ -435,6 +435,7 @@ end)
 require("trouble").setup {
     auto_open = true,
     auto_close = false,
+    auto_preview = false,
     height = 5,
 }
 EOF
