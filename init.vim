@@ -1,7 +1,6 @@
 if &compatible
     set nocompatible               " Be iMproved
 endif
-" hahahae pic
 
 call plug#begin('~/.vim/plugged')
 
@@ -887,6 +886,3 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
-
-" Yipee
-" Feetool
