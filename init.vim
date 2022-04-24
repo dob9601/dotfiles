@@ -1,7 +1,6 @@
 if &compatible
     set nocompatible               " Be iMproved
 endif
-" hahahae pic
 
 call plug#begin('~/.vim/plugged')
 
