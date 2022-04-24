@@ -14,14 +14,8 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ray-x/lsp_signature.nvim'
 
-" Neorg
-Plug 'nvim-neorg/neorg'
-
 " Show current context
 Plug 'wellle/context.vim'
-
-" Targets
-Plug 'wellle/targets.vim'
 
 " Discord
 Plug 'andweeb/presence.nvim'
@@ -204,23 +198,7 @@ EOF
 
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
-" -----------------     Norg     -----------------
-lua << EOF
-require('neorg').setup {
-    load = {
-        ["core.defaults"] = {},
-        ["core.norg.concealer"] = {},
-        ["core.norg.dirman"] = {
-            config = {
-                workspaces = {
-                    work = "~/notes/work",
-                    home = "~/notes/home",
-                }
-            }
-        }
-    }
-}
-EOF
+
 " -----------------    Context   -----------------
 let g:context_enabled = 0
 
@@ -435,7 +413,6 @@ end)
 require("trouble").setup {
     auto_open = true,
     auto_close = false,
-    auto_preview = false,
     height = 5,
 }
 EOF
@@ -531,8 +508,7 @@ local function get_notif_data(client_id, token)
 end
 
 
-local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
-		
+local spinner_frames = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" }
 
 local function update_spinner(client_id, token)
  local notif_data = get_notif_data(client_id, token)
@@ -722,7 +698,6 @@ dashboard.section.buttons.val = {
     dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
     dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
     dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
-    dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
     dashboard.button( "s", "  Settings" , ":e $MYVIMRC<CR>"),
     dashboard.button( "q", "  Quit", ":qa<CR>"),
 }
@@ -876,7 +851,7 @@ EOF
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { }, -- List of parsers to ignore installing
   highlight = {
     enable = true,              -- false will disable the whole extension
