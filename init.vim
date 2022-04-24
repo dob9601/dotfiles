@@ -508,7 +508,7 @@ local function get_notif_data(client_id, token)
 end
 
 
-local spinner_frames = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" }
+local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
 
 local function update_spinner(client_id, token)
  local notif_data = get_notif_data(client_id, token)
