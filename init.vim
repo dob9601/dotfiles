@@ -1,7 +1,6 @@
 if &compatible
     set nocompatible               " Be iMproved
 endif
-" hahahae pic
 
 call plug#begin('~/.vim/plugged')
 
@@ -851,7 +850,7 @@ EOF
 
 lua << EOF
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all",
+  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   ignore_install = { }, -- List of parsers to ignore installing
   highlight = {
     enable = true,              -- false will disable the whole extension
