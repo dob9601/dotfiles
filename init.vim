@@ -189,6 +189,7 @@ autocmd BufNewFile,BufRead *.md setlocal linebreak wrap
 autocmd BufNewFile,BufRead *.html.tera setlocal syntax=htmldjango
 autocmd BufNewFile,BufRead *.pw setlocal filetype=pw
 autocmd BufNewFile,BufRead *.awg setlocal filetype=yaml
+autocmd BufNewFile,BufRead *.norg setlocal conceallevel=2
 
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -734,7 +735,7 @@ dashboard.section.buttons.val = {
     dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
     dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
     dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
-    dashboard.button( "n", "  Notes" , ":Neorg workspace home<CR>"),
+    dashboard.button( "n", "ﴬ  Notes" , ":Neorg workspace home<CR>"),
     dashboard.button( "s", "  JTD Sync" , ":split | resize 10 | terminal jtd sync dob9601/dotfiles nvim<CR>i"),
     dashboard.button( "i", "  JTD Install" , ":split | resize 10 | terminal jtd install dob9601/dotfiles nvim<CR>i"),
     dashboard.button( "c", "  Config" , ":e $MYVIMRC<CR>"),
