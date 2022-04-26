@@ -167,6 +167,9 @@ set cursorline " Make cursor easier to find
 nnoremap <del> "_x
 nnoremap x "_x
 
+" Make the terminal close its buffer when it exits
+au TermClose * quit
+
 set fillchars+=diff:╱
 
 set timeoutlen=500
