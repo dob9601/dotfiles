@@ -168,7 +168,7 @@ nnoremap <del> "_x
 nnoremap x "_x
 
 " Make the terminal close its buffer when it exits
-au TermClose * quit
+au TermClose * quit | call input("Press enter to close terminal")
 
 set fillchars+=diff:╱
 
