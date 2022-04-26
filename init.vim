@@ -92,8 +92,9 @@ Plug 'akinsho/bufferline.nvim'
 Plug 'ap/vim-css-color'
 
 " Zen mode
-Plug 'junegunn/goyo.vim'
+Plug 'folke/zen-mode.nvim'
 
+" FIXME: UNNEEDED??
 Plug 'honza/vim-snippets'
 
 " Todo highlighting
@@ -210,6 +211,16 @@ require('neorg').setup {
     load = {
         ["core.defaults"] = {},
         ["core.norg.concealer"] = {},
+        ["core.gtd.base"] = {
+            config = {
+                workspace = "home",
+            }
+        },
+        ["core.presenter"] = {
+           config = {
+                zen_mode = "zen-mode",
+           }
+        },
         ["core.norg.dirman"] = {
             config = {
                 workspaces = {
@@ -226,6 +237,15 @@ let g:context_enabled = 0
 
 inoremap <silent><A-c> <C-o>:ContextPeek<CR>
 nnoremap <silent><A-c> :ContextPeek<CR>
+
+" -----------------   Zen mode   -----------------
+lua << EOF
+  require("zen-mode").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
 
 " -----------------      LSP     -----------------
 
