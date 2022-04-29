@@ -605,12 +605,6 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
         return
     end
 
-    print(vim.inspect(val))
-
-    if val.message == "no results" and val.title == "Trouble" then
-        return
-    end
-
     if vim.lsp.get_client_by_id(client_id).name == "ltex" then
         if ltex_initial_check_occurred then
             return
