@@ -774,6 +774,9 @@ dashboard.section.footer.val = fortune()
 alpha.setup(dashboard.opts)
 EOF
 
+nnoremap <C-w>n :vsplit <bar> Alpha<CR>
+nnoremap <C-w>t :tabnew <bar> Alpha<CR>
+
 "--------------------   Ale  -------------------- 
 let g:ale_echo_cursor= 0
 let g:ale_cursor_detail=1
