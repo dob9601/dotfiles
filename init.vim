@@ -19,6 +19,9 @@ Plug 'nvim-neorg/neorg'
 " Show current context
 Plug 'wellle/context.vim'
 
+" Docker Containers
+Plug 'jamestthompson3/nvim-remote-containers'
+
 " Targets
 Plug 'wellle/targets.vim'
 
@@ -531,7 +534,16 @@ EOF
 " --------------------- Notify ---------------------
 
 lua << EOF
-vim.notify = require("notify")
+
+local notify = require("notify")
+local function notify_wrapper(message, level, opts)
+    if message == "no results" and opts["title"] == "Trouble" then
+        return
+    end
+
+    return notify(message, level, opts)
+end
+vim.notify = notify_wrapper
 
 -- Utility functions shared between progress reports for LSP and DAP
 
@@ -593,11 +605,11 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
         return
     end
 
+    print(vim.inspect(val))
+
     if val.message == "no results" and val.title == "Trouble" then
         return
     end
-
-    print(vim.inspect(val))
 
     if vim.lsp.get_client_by_id(client_id).name == "ltex" then
         if ltex_initial_check_occurred then
