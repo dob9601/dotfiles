@@ -429,15 +429,6 @@ local custom_server_opts = {
 	  }
       }
   end,
-  ["rust_analyzer"] = function(opts)
-      opts.settings = {
-	  ["rust-analyzer"] = {
-	      checkOnSave = {
-		  command = "clippy"
-	      }
-	  }
-      }
-  end,
 }
 -- Register a handler that will be called for each installed server when it's ready (i.e. when installation is finished
 -- or if the server is already installed).
