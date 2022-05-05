@@ -36,5 +36,5 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
 function vmux
-    ssh -At argv[1] "abduco -e '^g' -A nvim-session ~/Applications/nvim-linux64/bin/nvim"
+    ssh -At $argv "abduco -e '^g' -A nvim-session ~/Applications/nvim-linux64/bin/nvim"
 end
