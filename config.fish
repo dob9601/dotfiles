@@ -35,4 +35,6 @@ set -g theme_title_display_process no
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
-alias vmux="abduco -e '^g' -A nvim-session nvim"
+function vmux
+    ssh -At argv[1] "abduco -e '^g' -A nvim-session ~/Applications/nvim-linux64/bin/nvim"
+end
