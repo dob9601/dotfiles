@@ -161,7 +161,7 @@ set signcolumn=yes:2
 
 runtime mswin.vim
 
-tnoremap <C-[> <C-\><C-n> " Change mapping to make terminal easier to exit
+tnoremap <Esc> <C-\><C-n> " Change mapping to make terminal easier to exit
 
 set tabstop=4 shiftwidth=4 expandtab
 
@@ -439,7 +439,17 @@ local custom_server_opts = {
 	  ["rust-analyzer"] = {
 	      checkOnSave = {
 		  command = "clippy"
-	      }
+	      },
+              assist = {
+                  importGranularity = "module",
+                  importPrefix = "self",
+              },
+              cargo = {
+                  loadOutDirsFromCheck = true
+              },
+              procMacro = {
+                  enable = true
+              },
 	  }
       }
   end,
