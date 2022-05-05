@@ -23,6 +23,9 @@ Plug 'wellle/context.vim'
 " Docker Containers
 Plug 'jamestthompson3/nvim-remote-containers'
 
+" Make CSV/TSVs easier to read
+Plug 'mechatroner/rainbow_csv'
+
 " Targets
 Plug 'wellle/targets.vim'
 
