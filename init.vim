@@ -688,7 +688,7 @@ dashboard.section.buttons.val = {
     dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
     dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
     dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
-    dashboard.button( "t", "  Terminal" , ":split | resize 10 | terminal jtd sync dob9601/dotfiles nvim<CR>i"),
+    dashboard.button( "t", "  Terminal" , ":terminal<CR>"),
     dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
     dashboard.button( "n", "ﴬ  Notes" , ":Neorg workspace home<CR>"),
     dashboard.button( "s", "  JTD Sync" , ":split | resize 10 | terminal jtd sync dob9601/dotfiles nvim<CR>i"),
