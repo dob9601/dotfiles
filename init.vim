@@ -577,6 +577,15 @@ EOF
 " -------------------- CHADTree --------------------
 nnoremap <silent> <A-c> :CHADopen --nofocus<CR>
 
+lua << EOF
+local chadtree_settings = {
+    theme = {
+        text_colour_set = "nerdtree_syntax_dark"
+    }
+}
+vim.api.nvim_set_var("chadtree_settings", chadtree_settings)
+EOF
+
 " -------------------- Discord ---------------------
 lua << EOF
 require("presence"):setup({
