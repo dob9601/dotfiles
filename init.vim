@@ -17,6 +17,9 @@ Plug 'stevearc/dressing.nvim'
 " Neorg
 Plug 'nvim-neorg/neorg'
 
+" File browser
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
+
 " Show current context
 Plug 'wellle/context.vim'
 
@@ -304,7 +307,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader><leader>', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
@@ -526,6 +529,9 @@ require("bufferline").setup {
         separator_style = "slant",
         always_show_bufferline = true,
         close_command = "Bdelete %d",
+        offsets = {
+            {filetype = "CHADTree", text = "File Explorer", text_align = "center"}
+        },
         groups = {
             options = {
                 toggle_hidden_on_enter = true
@@ -567,6 +573,9 @@ vim.notify = notify_wrapper
 
 local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
 EOF
+
+" -------------------- CHADTree --------------------
+nnoremap <silent> <A-c> :CHADopen --nofocus<CR>
 
 " -------------------- Discord ---------------------
 lua << EOF
@@ -643,7 +652,7 @@ EOF
 "print(assert(handle:read('*a')))
 "EOF
 
-" Cursed hack to disable statusline completely for alpha buffer
+" Cursed hack to disable statusline completely for alpha and CHAD buffer
 autocmd BufEnter * set laststatus=2
 autocmd FileType alpha setlocal laststatus=0
 
