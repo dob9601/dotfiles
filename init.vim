@@ -518,13 +518,12 @@ EOF
 nnoremap <silent><Leader>b :BufferLinePick<CR>
 nnoremap <silent><Leader>d :BufferLinePickDelete<CR>
 nnoremap <silent><A-b>d :Bdelete<CR>
-nnoremap <silent><A-b>n :BufferLineCycleNext<CR>
-nnoremap <silent><A-b>p :BufferLineCyclePrev<CR>
+nnoremap <silent>gb :BufferLineCycleNext<CR>
+nnoremap <silent>gB :BufferLineCyclePrev<CR>
 
 lua << EOF
 require("bufferline").setup {
     options = {
-        mode = "tabs",
         diagnostics = "nvim_lsp",
         separator_style = "slant",
         always_show_bufferline = true,
@@ -575,7 +574,8 @@ local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
 EOF
 
 " -------------------- CHADTree --------------------
-nnoremap <silent> <A-c> :CHADopen --nofocus<CR>
+nnoremap <silent> <A-c> :CHADopen<CR>
+autocmd VimEnter * CHADopen --nofocus
 
 lua << EOF
 local chadtree_settings = {
