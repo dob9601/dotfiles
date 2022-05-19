@@ -47,6 +47,9 @@ Plug 'luukvbaal/stabilize.nvim'
 " better JSX support
 Plug 'maxmellon/vim-jsx-pretty'
 
+" Better terminal
+Plug 'akinsho/toggleterm.nvim'
+
 " Statusbar
 Plug 'hoob3rt/lualine.nvim'
 
@@ -487,6 +490,7 @@ end)
 
 require("trouble").setup {
     auto_open = true,
+    auto_preview = false,
     auto_close = false,
     height = 5,
 }
