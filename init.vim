@@ -860,6 +860,14 @@ require('todo-comments').setup {
 }
 EOF
 
+"------------------ Toggleterm ---------------------
+
+lua << EOF
+require("toggleterm").setup {
+    open_mapping = [[<c-\>]],
+}
+EOF
+
 "------------------ Treesitter ---------------------
 
 lua << EOF
