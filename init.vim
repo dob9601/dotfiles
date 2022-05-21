@@ -152,7 +152,7 @@ set shortmess+=A
 set updatetime=300
 
 " Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
-set inccommand=split
+set inccommand=nosplit
 "
 " Enable mouse support
 set mouse=a
