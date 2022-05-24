@@ -579,7 +579,7 @@ EOF
 
 " -------------------- CHADTree --------------------
 nnoremap <silent> <A-c> :CHADopen<CR>
-autocmd VimEnter * CHADopen --nofocus
+autocmd BufEnter * if (winnr("$") == 1 && &filetype == "CHADTree") | q | endif
 
 lua << EOF
 local chadtree_settings = {
