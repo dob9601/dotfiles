@@ -99,7 +99,7 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'akinsho/bufferline.nvim'
 
 " Colour code highlighting
-Plug 'ap/vim-css-color'
+Plug 'norcalli/nvim-colorizer.lua'
 
 " Zen mode
 Plug 'folke/zen-mode.nvim'
@@ -219,6 +219,10 @@ EOF
 
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
+
+" -----------------  Colorizer   -----------------
+lua require'colorizer'.setup()
+
 " -----------------     Norg     -----------------
 lua << EOF
 require('neorg').setup {
@@ -491,15 +495,6 @@ require("trouble").setup {
     auto_close = false,
     height = 5,
 }
-EOF
-
-" -------------------- Which Key -------------------
-lua << EOF
-  require("which-key").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
 EOF
 
 " -------------------- Stabilize -------------------
