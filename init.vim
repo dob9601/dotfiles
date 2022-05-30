@@ -35,9 +35,6 @@ Plug 'wellle/targets.vim'
 " Discord
 Plug 'andweeb/presence.nvim'
 
-" Show key combos
-Plug 'folke/which-key.nvim'
-
 " Bracket closing
 Plug 'windwp/nvim-autopairs'
 
@@ -544,14 +541,14 @@ require("bufferline").setup {
                     name = "Tests",
                     icon = "",
                     matcher = function(buf)
-                        return buf.name:match('%_test') or buf.name:match('%_spec')
+                        return buf.filename:match('%_test') or buf.filename:match('%_spec')
                     end,
                 },
                 {
                     name = "Dotfiles",
                     icon = "",
                     matcher = function(buf)
-                        return buf.name:sub(1, 1) == '.'
+                        return buf.filename:sub(1, 1) == '.'
                     end,
                 }
             }
