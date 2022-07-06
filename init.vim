@@ -10,6 +10,7 @@ Plug 'williamboman/nvim-lsp-installer'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'folke/trouble.nvim'
+Plug 'folke/lsp-colors.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'stevearc/dressing.nvim'
@@ -65,6 +66,7 @@ Plug 'Vimjas/vim-python-pep8-indent'
 Plug 'folke/tokyonight.nvim'
 Plug 'marko-cerovac/material.nvim'
 Plug 'sainnhe/sonokai'
+Plug 'rebelot/kanagawa.nvim'
 
 " Highlight F/f/T/t jumps
 Plug 'deris/vim-shot-f' 
@@ -209,13 +211,32 @@ autocmd BufNewFile,BufRead *.norg setlocal conceallevel=2
 let g:python3_host_prog = '/usr/bin/python3'
 
 " ----------------- Colourscheme -----------------
+
 set termguicolors
 
-colorscheme tokyonight
-
 lua << EOF
+vim.opt.laststatus = 3
+vim.opt.fillchars:append({
+    horiz = '━',
+    horizup = '┻',
+    horizdown = '┳',
+    vert = '┃',
+    vertleft = '┨',
+    vertright = '┣',
+    verthoriz = '╋',
+})
+require("kanagawa").setup({
+    globalStatus = true,
+    dimInactive = true,
+    ...
+})
+vim.cmd("colorscheme kanagawa")
+
+require("lsp-colors").setup()
 require('nvim-autopairs').setup{}
 EOF
+
+" colorscheme kanagawa " sonokai " tokyonight
 
 " Conceal the tildes at the end of a buffer, makes start page look nicer
 highlight EndOfBuffer guifg=bg
@@ -460,6 +481,11 @@ local custom_server_opts = {
               procMacro = {
                   enable = true
               },
+              diagnostics = {
+                  experimental = {
+                      enable = true
+                  }
+              }
 	  }
       }
   end,
@@ -656,10 +682,6 @@ EOF
 "local handle = assert(io.popen('bash -c history', 'r'))
 "print(assert(handle:read('*a')))
 "EOF
-
-" Cursed hack to disable statusline completely for alpha and CHAD buffer
-autocmd BufEnter * set laststatus=2
-autocmd FileType alpha setlocal laststatus=0
 
 lua << EOF
 local alpha = require("alpha")
