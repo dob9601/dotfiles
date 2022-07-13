@@ -334,7 +334,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
     if client.resolved_capabilities.document_highlight then
         vim.cmd [[
@@ -349,8 +349,6 @@ local on_attach = function(client, bufnr)
         ]]
     end
 end
-
-local lsp_installer = require("nvim-lsp-installer")
 
 vim.g.coq_settings = {
     auto_start = 'shut-up',
@@ -434,86 +432,59 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
-local servers = {
-  "bashls",
-  "pyright",
-  "yamlls",
-  "eslint",
-  "tsserver",
-  "ltex",
-  "spectral",
-  "dockerls",
-  "rust_analyzer"
-}
-
-for _, name in pairs(servers) do
-  local server_is_found, server = lsp_installer.get_server(name)
-  if server_is_found and not server:is_installed() then
-    print("Installing " .. name)
-    server:install()
-  end
-end
-
-local custom_server_opts = {
-  -- Provide settings that should only apply to the "eslintls" server
-  ["yamlls"] = function(opts)
-      opts.settings = {
-	  yaml = {
-	      schemas = {
-		  ["https://raw.githubusercontent.com/dob9601/jointhedots/fixup-schema/src/dotfile_schema.json"] = "/jtd.yaml"
-	      }
-	  }
-      }
-  end,
-  ["rust_analyzer"] = function(opts)
-      opts.settings = {
-	  ["rust-analyzer"] = {
-	      checkOnSave = {
-		  command = "clippy"
-	      },
-              assist = {
-                  importGranularity = "module",
-                  importPrefix = "self",
-              },
-              cargo = {
-                  loadOutDirsFromCheck = true
-              },
-              procMacro = {
-                  enable = true
-              },
-              diagnostics = {
-                  experimental = {
-                      enable = true
-                  }
-              }
-	  }
-      }
-  end,
-}
--- Register a handler that will be called for each installed server when it's ready (i.e. when installation is finished
--- or if the server is already installed).
-lsp_installer.on_server_ready(function(server)
-    local opts = {
-        on_attach = on_attach,
-        flags = {
-            debounce_text_changes = 150
+require("nvim-lsp-installer").setup {}
+local lspconfig = require("lspconfig")
+lspconfig.yamlls.setup {
+    on_attach = on_attach,
+    settings = {
+        yaml = {
+            schemas = {
+                ["https://raw.githubusercontent.com/dob9601/jointhedots/fixup-schema/src/dotfile_schema.json"] = "/jtd.yaml"
+            }
         }
     }
+}
 
-    if custom_server_opts[server.name] then
-	custom_server_opts[server.name](opts)
-    end
+lspconfig.rust_analyzer.setup {
+    on_attach = on_attach,
+    settings = {
+        ["rust-analyzer"] = {
+            checkOnSave = {
+                command = "clippy"
+            },
+            assist = {
+                importGranularity = "module",
+                importPrefix = "self",
+            },
+            cargo = {
+                loadOutDirsFromCheck = true
+            },
+            procMacro = {
+                enable = true
+            },
+            diagnostics = {
+                experimental = {
+                    enable = true
+                }
+            }
+        }
+    }
+}
 
-    -- (optional) Customize the options passed to the server
-    -- if server.name == "tsserver" then
-    --     opts.root_dir = function() ... end
-    -- end
+lspconfig.pylsp.setup {
+    on_attach = on_attach,
+    settings = {
+        pylsp = {
+            plugins = {
+                pycodestyle = { enabled = false },
+                yapf = { enabled = false },
+            }
+        }
+    }
+}
 
-    -- This setup() function will take the provided server configuration and decorate it with the necessary properties
-    -- before passing it onwards to lspconfig.
-    -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    server:setup(coq.lsp_ensure_capabilities(opts))
-end)
+--   server:setup(coq.lsp_ensure_capabilities(opts))
+--end)
 
 require("trouble").setup {
     auto_open = true,
