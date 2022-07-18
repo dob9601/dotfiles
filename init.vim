@@ -18,8 +18,9 @@ Plug 'hrsh7th/nvim-cmp'
 " Completion icons
 Plug 'onsails/lspkind.nvim'
 
-" For luasnip users.
+" Luasnip users.
 Plug 'L3MON4D3/LuaSnip'
+Plug 'honza/vim-snippets'
 Plug 'saadparwaiz1/cmp_luasnip'
 
 Plug 'folke/trouble.nvim'
@@ -299,6 +300,14 @@ lua << EOF
 EOF
 
 " -----------------      LSP     -----------------
+" press <Tab> to expand or jump in a snippet. These can also be mapped separately
+" via <Plug>luasnip-expand-snippet and <Plug>luasnip-jump-next.
+imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
+" -1 for jumping backwards.
+inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
+
+snoremap <silent> <Tab> <cmd>lua require('luasnip').jump(1)<Cr>
+snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
 
 lua << EOF
 require("lsp_signature").setup({
@@ -317,7 +326,16 @@ lsp_status.config({
 lsp_status.register_progress()
 
 -- CMP
-local cmp = require'cmp'
+
+require("luasnip.loaders.from_snipmate").lazy_load()
+
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local luasnip = require("luasnip")
+local cmp = require('cmp')
 
 cmp.setup({
   snippet = {
@@ -352,6 +370,27 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -388,8 +427,13 @@ cmp.setup.cmdline(':', {
   })
 })
 
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
+
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
+
 local opts = { noremap=true, silent=true }
 vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 vim.api.nvim_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
@@ -419,32 +463,6 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 end
-local npairs = require('nvim-autopairs')
-npairs.setup({ map_bs = false, map_cr = false })
-
-_G.MUtils = {}
-
-MUtils.CR = function()
-  if vim.fn.pumvisible() ~= 0 then
-    if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
-      return npairs.esc('<c-y>')
-    else
-      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
-    end
-  else
-    return npairs.autopairs_cr()
-  end
-end
-vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
-
-MUtils.BS = function()
-  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
-    return npairs.esc('<c-e>') .. npairs.autopairs_bs()
-  else
-    return npairs.autopairs_bs()
-  end
-end
-vim.api.nvim_set_keymap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
 
 local signs = { Error = "", Warn = "", Hint = "", Info = "" }
 for type, icon in pairs(signs) do
@@ -614,7 +632,7 @@ EOF
 
 lua << EOF
  -- venn.nvim: enable or disable keymappings
-function _G.Toggle_venn()
+function toggle_venn()
     local venn_enabled = vim.inspect(vim.b.venn_enabled)
     if venn_enabled == "nil" then
         vim.b.venn_enabled = true
@@ -636,7 +654,7 @@ function _G.Toggle_venn()
     end
 end
 -- toggle keymappings for venn using <leader>v
-vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>v', ":lua toggle_venn()<CR>", { noremap = true, silent = true })
 EOF
 
 " ----------------------- Git ----------------------
@@ -916,3 +934,44 @@ require'nvim-treesitter.configs'.setup {
 EOF
 highlight! TSDefinitionUsage cterm=underline guibg=#49443c gui=underline 
 highlight! TSDefinition cterm=underline guibg=#49443c gui=underline 
+
+highlight! PmenuSel guibg=#282C34
+highlight! Pmenu guifg=#C5CDD9 guibg=#22252A
+
+highlight! CmpItemAbbrDeprecated guifg=#7E8294
+highlight! CmpItemAbbrMatch guifg=#82AAFF
+highlight! CmpItemAbbrMatchFuzzy guifg=#82AAFF
+highlight! CmpItemMenu guifg=#C792EA
+
+highlight! CmpItemKindField guifg=#EED8DA guibg=#B5585F
+highlight! CmpItemKindProperty guifg=#EED8DA guibg=#B5585F
+highlight! CmpItemKindEvent guifg=#EED8DA guibg=#B5585F
+
+highlight! CmpItemKindText guifg=#C3E88D guibg=#9FBD73
+highlight! CmpItemKindEnum guifg=#C3E88D guibg=#9FBD73
+highlight! CmpItemKindKeyword guifg=#C3E88D guibg=#9FBD73
+
+highlight! CmpItemKindConstant guifg=#FFE082 guibg=#D4BB6C
+highlight! CmpItemKindConstructor guifg=#FFE082 guibg=#D4BB6C
+highlight! CmpItemKindReference guifg=#FFE082 guibg=#D4BB6C
+
+highlight! CmpItemKindFunction guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindStruct guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindClass guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindModule guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindOperator guifg=#EADFF0 guibg=#A377BF
+
+highlight! CmpItemKindVariable guifg=#C5CDD9 guibg=#7E8294
+highlight! CmpItemKindFile guifg=#C5CDD9 guibg=#7E8294
+
+highlight! CmpItemKindUnit guifg=#F5EBD9 guibg=#D4A959
+highlight! CmpItemKindSnippet guifg=#F5EBD9 guibg=#D4A959
+highlight! CmpItemKindFolder guifg=#F5EBD9 guibg=#D4A959
+
+highlight! CmpItemKindMethod guifg=#DDE5F5 guibg=#6C8ED4
+highlight! CmpItemKindValue guifg=#DDE5F5 guibg=#6C8ED4
+highlight! CmpItemKindEnumMember guifg=#DDE5F5 guibg=#6C8ED4
+
+highlight! CmpItemKindInterface guifg=#D8EEEB guibg=#58B5A8
+highlight! CmpItemKindColor guifg=#D8EEEB guibg=#58B5A8
+highlight! CmpItemKindTypeParameter guifg=#D8EEEB guibg=#58B5A8
