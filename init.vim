@@ -97,8 +97,6 @@ Plug 'sindrets/diffview.nvim' " Better diff viewing
 Plug 'preservim/nerdcommenter'
 
 " Start page
-" Plug 'mhinz/vim-startify'
-" Plug 'startup-nvim/startup.nvim'
 Plug 'goolord/alpha-nvim'
 
 " Don't break layout when closing 
@@ -260,28 +258,29 @@ lua require'colorizer'.setup()
 " -----------------     Norg     -----------------
 lua << EOF
 require('neorg').setup {
-    load = {
-        ["core.defaults"] = {},
-        ["core.norg.concealer"] = {},
-        ["core.gtd.base"] = {
-            config = {
-                workspace = "home",
-            }
-        },
-        ["core.presenter"] = {
-           config = {
-                zen_mode = "zen-mode",
-           }
-        },
-        ["core.norg.dirman"] = {
-            config = {
-                workspaces = {
-                    work = "~/notes/work",
-                    home = "~/notes/home",
-                }
-            }
-        }
-    }
+  load = {
+      ["core.defaults"] = {},
+      ["core.norg.concealer"] = {},
+      ["core.integrations.nvim-cmp"] = {},
+      ["core.gtd.base"] = {
+          config = {
+              workspace = "home",
+          }
+      },
+      ["core.presenter"] = {
+         config = {
+              zen_mode = "zen-mode",
+         }
+      },
+      ["core.norg.dirman"] = {
+          config = {
+              workspaces = {
+                  work = "~/notes/work",
+                  home = "~/notes/home",
+              }
+          }
+      }
+  }
 }
 EOF
 " -----------------    Context   -----------------
@@ -292,11 +291,7 @@ nnoremap <silent><A-c> :ContextPeek<CR>
 
 " -----------------   Zen mode   -----------------
 lua << EOF
-  require("zen-mode").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
+require("zen-mode").setup({})
 EOF
 
 " -----------------      LSP     -----------------
