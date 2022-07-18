@@ -8,11 +8,15 @@ call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
 
+" Completion
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
+
+" Completion icons
+Plug 'onsails/lspkind.nvim'
 
 " For luasnip users.
 Plug 'L3MON4D3/LuaSnip'
@@ -142,6 +146,8 @@ Plug 'kshenoy/vim-signature'
 
 " Treesitter synax highlighting
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Treesitter-based navigation
+Plug 'nvim-treesitter/nvim-treesitter-refactor'
 
 call plug#end()
 
@@ -156,7 +162,7 @@ set shortmess+=A
 
 set updatetime=300
 
-" Show find and replace as it happens. Open buffer at bottom to show changes throughout file.
+" Show find and replace as it happens. 
 set inccommand=nosplit
 "
 " Enable mouse support
@@ -311,34 +317,6 @@ lsp_status.config({
 lsp_status.register_progress()
 
 -- CMP
-local kind_icons = {
-  Text = "",
-  Method = "",
-  Function = "",
-  Constructor = "",
-  Field = "",
-  Variable = "",
-  Class = "ﴯ",
-  Interface = "",
-  Module = "",
-  Property = "ﰠ",
-  Unit = "",
-  Value = "",
-  Enum = "",
-  Keyword = "",
-  Snippet = "",
-  Color = "",
-  File = "",
-  Reference = "",
-  Folder = "",
-  EnumMember = "",
-  Constant = "",
-  Struct = "",
-  Event = "",
-  Operator = "",
-  TypeParameter = ""
-}
-
 local cmp = require'cmp'
 
 cmp.setup({
@@ -351,23 +329,22 @@ cmp.setup({
     end,
   },
   window = {
-    -- completion = cmp.config.window.bordered(),
-    -- documentation = cmp.config.window.bordered(),
+    completion = {
+      winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
+      col_offset = -3,
+      side_padding = 0,
+    },
   },
   formatting = {
+    fields = { "kind", "abbr", "menu" },
     format = function(entry, vim_item)
-      -- Kind icons
-      vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-      -- Source
-      vim_item.menu = ({
-        buffer = "[Buffer]",
-        nvim_lsp = "[LSP]",
-        luasnip = "[LuaSnip]",
-        nvim_lua = "[Lua]",
-        latex_symbols = "[LaTeX]",
-      })[entry.source.name]
-      return vim_item
-    end
+      local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+      local strings = vim.split(kind.kind, "%s", { trimempty = true })
+      kind.kind = " " .. strings[1] .. " "
+      kind.menu = "    (" .. strings[2] .. ")"
+
+      return kind
+    end,
   },
   mapping = cmp.mapping.preset.insert({
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -430,7 +407,6 @@ local on_attach = function(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
 
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -442,19 +418,6 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-
-    if client.resolved_capabilities.document_highlight then
-        vim.cmd [[
-          hi! LspReferenceRead cterm=underline gui=underline
-          hi! LspReferenceText cterm=underline gui=underline
-          hi! LspReferenceWrite cterm=underline gui=underline
-          augroup lsp_document_highlight
-            autocmd! * <buffer>
-            autocmd! CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-            autocmd! CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-          augroup END
-        ]]
-    end
 end
 local npairs = require('nvim-autopairs')
 npairs.setup({ map_bs = false, map_cr = false })
@@ -932,3 +895,24 @@ require'nvim-treesitter.configs'.setup {
   }
 }
 EOF
+"
+" -------------- Treesitter Refactor ----------
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  refactor = {
+    highlight_definitions = {
+      enable = true,
+      -- Set to false if you have an `updatetime` of ~100.
+      clear_on_cursor_move = true,
+    },
+  },
+  navigation = {
+    enable = true,
+    keymaps = {
+      goto_definition = "gd",
+    },
+  },
+}
+EOF
+highlight! TSDefinitionUsage cterm=underline guibg=#49443c gui=underline 
+highlight! TSDefinition cterm=underline guibg=#49443c gui=underline 
