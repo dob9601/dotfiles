@@ -7,8 +7,17 @@ call plug#begin('~/.vim/plugged')
 " Language server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
-Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For luasnip users.
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
+
 Plug 'folke/trouble.nvim'
 Plug 'folke/lsp-colors.nvim'
 Plug 'nvim-lua/lsp-status.nvim'
@@ -105,9 +114,6 @@ Plug 'norcalli/nvim-colorizer.lua'
 
 " Zen mode
 Plug 'folke/zen-mode.nvim'
-
-" FIXME: UNNEEDED??
-Plug 'honza/vim-snippets'
 
 " Todo highlighting
 Plug 'nvim-lua/plenary.nvim'
@@ -304,6 +310,107 @@ lsp_status.config({
 })
 lsp_status.register_progress()
 
+-- CMP
+local kind_icons = {
+  Text = "",
+  Method = "",
+  Function = "",
+  Constructor = "",
+  Field = "",
+  Variable = "",
+  Class = "ﴯ",
+  Interface = "",
+  Module = "",
+  Property = "ﰠ",
+  Unit = "",
+  Value = "",
+  Enum = "",
+  Keyword = "",
+  Snippet = "",
+  Color = "",
+  File = "",
+  Reference = "",
+  Folder = "",
+  EnumMember = "",
+  Constant = "",
+  Struct = "",
+  Event = "",
+  Operator = "",
+  TypeParameter = ""
+}
+
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+      -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+    end,
+  },
+  window = {
+    -- completion = cmp.config.window.bordered(),
+    -- documentation = cmp.config.window.bordered(),
+  },
+  formatting = {
+    format = function(entry, vim_item)
+      -- Kind icons
+      vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
+      -- Source
+      vim_item.menu = ({
+        buffer = "[Buffer]",
+        nvim_lsp = "[LSP]",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[Lua]",
+        latex_symbols = "[LaTeX]",
+      })[entry.source.name]
+      return vim_item
+    end
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' }, -- For luasnip users.
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Set configuration for specific filetype.
+cmp.setup.filetype('gitcommit', {
+  sources = cmp.config.sources({
+    { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+  }, {
+    { name = 'buffer' },
+  })
+})
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})
+
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
@@ -349,54 +456,6 @@ local on_attach = function(client, bufnr)
         ]]
     end
 end
-
-vim.g.coq_settings = {
-    auto_start = 'shut-up',
-    keymap = { recommended = false },
-    display = {
-	pum = {
-	    kind_context = {" ❲", "❳"},
-	    fast_close = true,
-	},
-	preview = {
-	    border = "rounded"
-	},
-	icons = {
-	    mode = "short",
-	}
-    },
-    limits = {
-	completion_auto_timeout = 0.12
-    },
-    clients = {
-        buffers = {
-            enabled = true,
-            weight_adjust = -1.9,
-        },
-        tree_sitter = {
-            enabled = true,
-            weight_adjust = -1.5
-        },
-        lsp = {
-            enabled = true,
-            weight_adjust = 1.5,
-            resolve_timeout = 0.12,
-        },
-        snippets = {
-            enabled = true,
-            weight_adjust = 1.9
-        },
-        tags = {
-	    enabled = false,
-            weight_adjust = -1.5
-        }
-    }
-}
-vim.api.nvim_set_keymap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<c-c>', [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<tab>', [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<s-tab>', [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
-
 local npairs = require('nvim-autopairs')
 npairs.setup({ map_bs = false, map_cr = false })
 
@@ -424,18 +483,20 @@ MUtils.BS = function()
 end
 vim.api.nvim_set_keymap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
 
-local coq = require("coq")
-
 local signs = { Error = "", Warn = "", Hint = "", Info = "" }
 for type, icon in pairs(signs) do
   local hl = "DiagnosticSign" .. type
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
 
+
+-- Setup lspconfig.
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 require("nvim-lsp-installer").setup {}
 local lspconfig = require("lspconfig")
 lspconfig.yamlls.setup {
     on_attach = on_attach,
+    capabilities = capabilities,
     settings = {
         yaml = {
             schemas = {
@@ -447,6 +508,7 @@ lspconfig.yamlls.setup {
 
 lspconfig.rust_analyzer.setup {
     on_attach = on_attach,
+    capabilities = capabilities,
     settings = {
         ["rust-analyzer"] = {
             checkOnSave = {
@@ -482,9 +544,6 @@ lspconfig.pylsp.setup {
         }
     }
 }
-
---   server:setup(coq.lsp_ensure_capabilities(opts))
---end)
 
 require("trouble").setup {
     auto_open = true,
