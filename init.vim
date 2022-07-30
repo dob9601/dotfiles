@@ -13,7 +13,11 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
+Plug 'lukas-reineke/cmp-rg'
 Plug 'hrsh7th/nvim-cmp'
+Plug 'ray-x/cmp-treesitter' " Treesitter source
+Plug 'Saecki/crates.nvim' " Crates.io source
+Plug 'hrsh7th/cmp-emoji' " Emoji source
 
 " Completion icons
 Plug 'onsails/lspkind.nvim'
@@ -117,6 +121,8 @@ Plug 'norcalli/nvim-colorizer.lua'
 
 " Zen mode
 Plug 'folke/zen-mode.nvim'
+" Focus
+Plug 'folke/twilight.nvim'
 
 " Todo highlighting
 Plug 'nvim-lua/plenary.nvim'
@@ -304,6 +310,49 @@ inoremap <silent> <S-Tab> <cmd>lua require'luasnip'.jump(-1)<Cr>
 snoremap <silent> <Tab> <cmd>lua require('luasnip').jump(1)<Cr>
 snoremap <silent> <S-Tab> <cmd>lua require('luasnip').jump(-1)<Cr>
 
+highlight! PmenuSel guibg=#282C34
+highlight! Pmenu guifg=#C5CDD9 guibg=#22252A
+
+highlight! CmpItemAbbrDeprecated guifg=#7E8294
+highlight! CmpItemAbbrMatch guifg=#82AAFF
+highlight! CmpItemAbbrMatchFuzzy guifg=#82AAFF
+highlight! CmpItemMenu guifg=#C792EA
+
+highlight! CmpItemKindField guifg=#EED8DA guibg=#B5585F
+highlight! CmpItemKindProperty guifg=#EED8DA guibg=#B5585F
+highlight! CmpItemKindEvent guifg=#EED8DA guibg=#B5585F
+
+highlight! CmpItemKindText guifg=#31393C guibg=#9FBD73
+highlight! CmpItemKindEnum guifg=#31393C guibg=#9FBD73
+highlight! CmpItemKindKeyword guifg=#31393C guibg=#9FBD73
+
+highlight! CmpItemKindConstant guifg=#FFE082 guibg=#D4BB6C
+highlight! CmpItemKindConstructor guifg=#FFE082 guibg=#D4BB6C
+highlight! CmpItemKindReference guifg=#FFE082 guibg=#D4BB6C
+
+highlight! CmpItemKindFunction guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindStruct guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindClass guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindModule guifg=#EADFF0 guibg=#A377BF
+highlight! CmpItemKindOperator guifg=#EADFF0 guibg=#A377BF
+
+highlight! CmpItemKindVariable guifg=#C5CDD9 guibg=#7E8294
+highlight! CmpItemKindFile guifg=#C5CDD9 guibg=#7E8294
+
+highlight! CmpItemKindUnit guifg=#F5EBD9 guibg=#D4A959
+highlight! CmpItemKindSnippet guifg=#F5EBD9 guibg=#D4A959
+highlight! CmpItemKindFolder guifg=#F5EBD9 guibg=#D4A959
+
+highlight! CmpItemKindMethod guifg=#DDE5F5 guibg=#6C8ED4
+highlight! CmpItemKindValue guifg=#DDE5F5 guibg=#6C8ED4
+highlight! CmpItemKindEnumMember guifg=#DDE5F5 guibg=#6C8ED4
+
+highlight! CmpItemKindInterface guifg=#D8EEEB guibg=#58B5A8
+highlight! CmpItemKindColor guifg=#D8EEEB guibg=#58B5A8
+highlight! CmpItemKindTypeParameter guifg=#D8EEEB guibg=#58B5A8
+
+nnoremap <silent> <F5> :LspRestart<CR>
+
 lua << EOF
 require("lsp_signature").setup({
     doc_lines = 0,
@@ -331,6 +380,8 @@ end
 
 local luasnip = require("luasnip")
 local cmp = require('cmp')
+require('crates').setup()
+
 
 cmp.setup({
   snippet = {
@@ -354,7 +405,19 @@ cmp.setup({
       local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
       local strings = vim.split(kind.kind, "%s", { trimempty = true })
       kind.kind = " " .. strings[1] .. " "
-      kind.menu = "    (" .. strings[2] .. ")"
+      kind.menu = "(" .. strings[2] .. ")"
+
+      local source = ({
+        buffer = "[Buffer]",
+        rg = "[RG]",
+        nvim_lsp = "[LSP]",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[Lua]",
+      })[entry.source.name]
+
+      if source ~= nil then
+        kind.menu = kind.menu .. " " .. source
+      end
 
       return kind
     end,
@@ -389,9 +452,16 @@ cmp.setup({
   }),
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
-    { name = 'luasnip' }, -- For luasnip users.
+    { name = 'crates' },
+    { name = 'luasnip' },
+    { name = 'path' },
+  }, {
+    { name = 'treesitter' },
   }, {
     { name = 'buffer' },
+  }, {
+    { name = 'rg' },
+    { name = 'emoji' },
   })
 })
 
@@ -400,6 +470,7 @@ cmp.setup.filetype('gitcommit', {
   sources = cmp.config.sources({
     { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
   }, {
+    { name = 'treesitter' },
     { name = 'buffer' },
   })
 })
@@ -408,7 +479,8 @@ cmp.setup.filetype('gitcommit', {
 cmp.setup.cmdline('/', {
   mapping = cmp.mapping.preset.cmdline(),
   sources = {
-    { name = 'buffer' }
+    { name = 'buffer' },
+    { name = 'treesitter' }
   }
 })
 
@@ -589,6 +661,11 @@ EOF
 lua << EOF
 
 local notify = require("notify")
+
+notify.setup({
+  max_width = 100
+})
+
 local function notify_wrapper(message, level, opts)
     if message == "no results" and opts["title"] == "Trouble" then
         return
@@ -930,43 +1007,3 @@ EOF
 highlight! TSDefinitionUsage cterm=underline guibg=#49443c gui=underline 
 highlight! TSDefinition cterm=underline guibg=#49443c gui=underline 
 
-highlight! PmenuSel guibg=#282C34
-highlight! Pmenu guifg=#C5CDD9 guibg=#22252A
-
-highlight! CmpItemAbbrDeprecated guifg=#7E8294
-highlight! CmpItemAbbrMatch guifg=#82AAFF
-highlight! CmpItemAbbrMatchFuzzy guifg=#82AAFF
-highlight! CmpItemMenu guifg=#C792EA
-
-highlight! CmpItemKindField guifg=#EED8DA guibg=#B5585F
-highlight! CmpItemKindProperty guifg=#EED8DA guibg=#B5585F
-highlight! CmpItemKindEvent guifg=#EED8DA guibg=#B5585F
-
-highlight! CmpItemKindText guifg=#C3E88D guibg=#9FBD73
-highlight! CmpItemKindEnum guifg=#C3E88D guibg=#9FBD73
-highlight! CmpItemKindKeyword guifg=#C3E88D guibg=#9FBD73
-
-highlight! CmpItemKindConstant guifg=#FFE082 guibg=#D4BB6C
-highlight! CmpItemKindConstructor guifg=#FFE082 guibg=#D4BB6C
-highlight! CmpItemKindReference guifg=#FFE082 guibg=#D4BB6C
-
-highlight! CmpItemKindFunction guifg=#EADFF0 guibg=#A377BF
-highlight! CmpItemKindStruct guifg=#EADFF0 guibg=#A377BF
-highlight! CmpItemKindClass guifg=#EADFF0 guibg=#A377BF
-highlight! CmpItemKindModule guifg=#EADFF0 guibg=#A377BF
-highlight! CmpItemKindOperator guifg=#EADFF0 guibg=#A377BF
-
-highlight! CmpItemKindVariable guifg=#C5CDD9 guibg=#7E8294
-highlight! CmpItemKindFile guifg=#C5CDD9 guibg=#7E8294
-
-highlight! CmpItemKindUnit guifg=#F5EBD9 guibg=#D4A959
-highlight! CmpItemKindSnippet guifg=#F5EBD9 guibg=#D4A959
-highlight! CmpItemKindFolder guifg=#F5EBD9 guibg=#D4A959
-
-highlight! CmpItemKindMethod guifg=#DDE5F5 guibg=#6C8ED4
-highlight! CmpItemKindValue guifg=#DDE5F5 guibg=#6C8ED4
-highlight! CmpItemKindEnumMember guifg=#DDE5F5 guibg=#6C8ED4
-
-highlight! CmpItemKindInterface guifg=#D8EEEB guibg=#58B5A8
-highlight! CmpItemKindColor guifg=#D8EEEB guibg=#58B5A8
-highlight! CmpItemKindTypeParameter guifg=#D8EEEB guibg=#58B5A8
