@@ -2,6 +2,13 @@ if &compatible
     set nocompatible               " Be iMproved
 endif
 
+set guifont=Delugia:h11
+
+if exists("g:neovide")
+  let g:neovide_cursor_vfx_mode = "railgun"
+  let g:neovide_fullscreen=v:true
+endif
+
 call plug#begin('~/.vim/plugged')
 
 " Language server
@@ -405,7 +412,12 @@ cmp.setup({
       local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
       local strings = vim.split(kind.kind, "%s", { trimempty = true })
       kind.kind = " " .. strings[1] .. " "
-      kind.menu = "(" .. strings[2] .. ")"
+
+      if strings[2] ~= nil then
+        kind.menu = "(" .. strings[2] .. ")"
+      else
+        kind.menu = "(N/A)"
+      end
 
       local source = ({
         buffer = "[Buffer]",
@@ -552,6 +564,11 @@ lspconfig.yamlls.setup {
             }
         }
     }
+}
+
+lspconfig.tsserver.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
 }
 
 lspconfig.rust_analyzer.setup {
