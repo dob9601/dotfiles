@@ -137,6 +137,8 @@ Plug 'folke/todo-comments.nvim'
 
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
+Plug 'nvim-telescope/telescope-project.nvim'
 
 " Ron highlighting
 Plug 'ron-rs/ron.vim'
@@ -200,8 +202,8 @@ set tabstop=4 shiftwidth=4 expandtab
 set cursorline " Make cursor easier to find
 
 " Make the delete button not yank
-nnoremap <del> "_x
-nnoremap x "_x
+nnoremap <silent> <del> "_x
+nnoremap <silent> x "_x
 
 set fillchars+=diff:╱
 
@@ -209,10 +211,10 @@ set timeoutlen=500
 
 set scrolloff=10
 
-nnoremap <Up>    :resize -2<CR>
-nnoremap <Down>  :resize +2<CR>
-nnoremap <Left>  :vertical resize -2<CR>
-nnoremap <Right> :vertical resize +2<CR>
+nnoremap <silent> <Up>    :resize -2<CR>
+nnoremap <silent> <Down>  :resize +2<CR>
+nnoremap <silent> <Left>  :vertical resize -2<CR>
+nnoremap <silent> <Right> :vertical resize +2<CR>
 
 autocmd TermOpen * setlocal scl=no nonumber
 
@@ -820,8 +822,8 @@ dashboard.section.buttons.val = {
     dashboard.button( "t", "  Terminal" , ":terminal<CR>"),
     dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
     dashboard.button( "n", "ﴬ  Notes" , ":Neorg workspace home<CR>"),
-    dashboard.button( "s", "  JTD Sync" , ":split | resize 10 | terminal jtd sync dob9601/dotfiles nvim<CR>i"),
-    dashboard.button( "i", "  JTD Install" , ":split | resize 10 | terminal jtd install dob9601/dotfiles nvim<CR>i"),
+    dashboard.button( "b", "  Browse Files" , ":Telescope file_browser<cr>"),
+    dashboard.button( "p", "ﴬ  Projects" , ":Telescope project<cr>"),
     dashboard.button( "c", "  Config" , ":e $MYVIMRC<CR>"),
     dashboard.button( "q", "  Quit", ":qa<CR>"),
 }
@@ -864,9 +866,10 @@ EOF
 
 "------------------- Telescope ------------------ 
 
-nnoremap <A-p> :Telescope<CR>
-nnoremap <A-f> :Telescope live_grep<CR>
+nnoremap <silent> <A-p> :Telescope<CR>
+nnoremap <silent> <A-f> :Telescope live_grep<CR>
 nnoremap <silent> <C-p> :Telescope find_files<CR>
+nnoremap <silent> <leader>p :Telescope project<CR>
 
 lua << EOF
 local actions = require("telescope.actions")
@@ -931,6 +934,9 @@ require('telescope').setup {
         },
     }
 }
+
+require("telescope").load_extension("file_browser")
+require("telescope").load_extension("project")
 EOF
 
 "-------------------- Lualine ------------------- 
