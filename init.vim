@@ -25,6 +25,7 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'ray-x/cmp-treesitter' " Treesitter source
 Plug 'Saecki/crates.nvim' " Crates.io source
 Plug 'hrsh7th/cmp-emoji' " Emoji source
+Plug 'lvimuser/lsp-inlayhints.nvim' " Inlay hints
 
 " Completion icons
 Plug 'onsails/lspkind.nvim'
@@ -521,11 +522,14 @@ vim.api.nvim_set_keymap('n', '[g', '<cmd>lua vim.diagnostic.goto_prev()<CR>', op
 vim.api.nvim_set_keymap('n', ']g', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
 
+require("lsp-inlayhints").setup()
+
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    require("lsp-inlayhints").on_attach(client, bufnr)
 
     lsp_status.on_attach(client)
     -- Mappings.
@@ -1029,4 +1033,3 @@ require'nvim-treesitter.configs'.setup {
 EOF
 highlight! TSDefinitionUsage cterm=underline guibg=#49443c gui=underline 
 highlight! TSDefinition cterm=underline guibg=#49443c gui=underline 
-
