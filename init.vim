@@ -693,7 +693,8 @@ lua << EOF
 local notify = require("notify")
 
 notify.setup({
-  max_width = 100
+  max_width = 100,
+  top_down = false,
 })
 
 local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
