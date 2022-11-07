@@ -27,6 +27,10 @@ Plug 'Saecki/crates.nvim' " Crates.io source
 Plug 'hrsh7th/cmp-emoji' " Emoji source
 Plug 'lvimuser/lsp-inlayhints.nvim' " Inlay hints
 
+" Better UI stuff
+Plug 'folke/noice.nvim'
+Plug 'MunifTanjim/nui.nvim'
+
 " Completion icons
 Plug 'onsails/lspkind.nvim'
 
@@ -194,7 +198,9 @@ set number " Show line numbers
 
 set signcolumn=yes:2
 
-runtime mswin.vim
+noremap <silent> <C-S>          :update<CR>
+vnoremap <silent> <C-S>         <C-C>:update<CR>
+inoremap <silent> <C-S>         <C-O>:update<CR>
 
 tnoremap <Esc> <C-\><C-n> " Change mapping to make terminal easier to exit
 
@@ -260,7 +266,8 @@ require("kanagawa").setup({
 vim.cmd("colorscheme kanagawa")
 
 require("lsp-colors").setup()
-require('nvim-autopairs').setup{}
+require('nvim-autopairs').setup()
+require("noice").setup()
 EOF
 
 " colorscheme kanagawa " sonokai " tokyonight
@@ -546,7 +553,7 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.format { async = true }<CR>', opts)
 end
 
 local signs = { Error = "", Warn = "", Hint = "", Info = "" }
@@ -557,7 +564,7 @@ end
 
 
 -- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
 require("nvim-lsp-installer").setup {}
 local lspconfig = require("lspconfig")
 lspconfig.yamlls.setup {
@@ -688,15 +695,6 @@ local notify = require("notify")
 notify.setup({
   max_width = 100
 })
-
-local function notify_wrapper(message, level, opts)
-    if message == "no results" and opts["title"] == "Trouble" then
-        return
-    end
-
-    return notify(message, level, opts)
-end
-vim.notify = notify_wrapper
 
 local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
 EOF
@@ -1033,3 +1031,5 @@ require'nvim-treesitter.configs'.setup {
 EOF
 highlight! TSDefinitionUsage cterm=underline guibg=#49443c gui=underline 
 highlight! TSDefinition cterm=underline guibg=#49443c gui=underline 
+
+highlight! link LspInlayHint Comment
