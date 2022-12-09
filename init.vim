@@ -15,6 +15,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/nvim-lsp-installer'
 
+Plug 'ggandor/leap.nvim'
+
 " Completion
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -52,7 +54,7 @@ Plug 'nvim-neorg/neorg'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
 
 " Show current context
-Plug 'wellle/context.vim'
+Plug 'nvim-treesitter/nvim-treesitter-context'
 
 " Docker Containers
 Plug 'jamestthompson3/nvim-remote-containers'
@@ -309,8 +311,8 @@ EOF
 " -----------------    Context   -----------------
 let g:context_enabled = 0
 
-inoremap <silent><A-c> <C-o>:ContextPeek<CR>
-nnoremap <silent><A-c> :ContextPeek<CR>
+nnoremap <silent><Leader>x :TSContextToggle<CR>
+lua require('leap').add_default_mappings()
 
 " -----------------   Zen mode   -----------------
 lua << EOF
@@ -369,6 +371,8 @@ highlight! CmpItemKindColor guifg=#D8EEEB guibg=#58B5A8
 highlight! CmpItemKindTypeParameter guifg=#D8EEEB guibg=#58B5A8
 
 nnoremap <silent> <F5> :LspRestart<CR>
+
+set completeopt=menu,menuone,noselect
 
 lua << EOF
 require("lsp_signature").setup({
@@ -449,7 +453,7 @@ cmp.setup({
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -543,6 +547,7 @@ local on_attach = function(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
 
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -580,6 +585,16 @@ lspconfig.yamlls.setup {
 }
 
 lspconfig.tsserver.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
+lspconfig.html.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+}
+
+lspconfig.cssls.setup {
   on_attach = on_attach,
   capabilities = capabilities,
 }
@@ -869,6 +884,7 @@ EOF
 
 "------------------- Telescope ------------------ 
 
+nnoremap <silent> <A-t> :Telescope treesitter<CR>
 nnoremap <silent> <A-p> :Telescope<CR>
 nnoremap <silent> <A-f> :Telescope live_grep<CR>
 nnoremap <silent> <C-p> :Telescope find_files<CR>
@@ -968,7 +984,11 @@ require('lualine').setup({
             'require("lsp-status").status()',
             'filename'
         },
-        lualine_x = {'encoding', 'fileformat', 'filetype'},
+        lualine_x = {{
+          require("noice").api.statusline.mode.get,
+          cond = require("noice").api.statusline.mode.has,
+          color = { fg = "#ff9e64" },
+        }, 'encoding', 'fileformat', 'filetype'},
         lualine_y = {'progress'},
         lualine_z = {'location'}
     },
@@ -1023,7 +1043,7 @@ require'nvim-treesitter.configs'.setup {
     },
   },
   navigation = {
-    enable = true,
+    enable = false,
     keymaps = {
       goto_definition = "gd",
     },
