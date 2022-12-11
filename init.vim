@@ -10,12 +10,22 @@ if exists("g:neovide")
 endif
 
 call plug#begin('~/.vim/plugged')
+Plug 'nvim-lua/plenary.nvim' " Misc lua utils
 
 " Language server
 Plug 'neovim/nvim-lspconfig'
-Plug 'williamboman/nvim-lsp-installer'
-
-Plug 'ggandor/leap.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'williamboman/mason.nvim'
+Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'onsails/lspkind.nvim'
+Plug 'L3MON4D3/LuaSnip'
+Plug 'honza/vim-snippets'
+Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'folke/trouble.nvim'
+Plug 'folke/lsp-colors.nvim'
+Plug 'nvim-lua/lsp-status.nvim'
+Plug 'ray-x/lsp_signature.nvim'
+Plug 'stevearc/dressing.nvim'
 
 " Completion
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -32,38 +42,39 @@ Plug 'lvimuser/lsp-inlayhints.nvim' " Inlay hints
 " Better UI stuff
 Plug 'folke/noice.nvim'
 Plug 'MunifTanjim/nui.nvim'
+Plug 'rcarriga/nvim-notify'
+Plug 'goolord/alpha-nvim'
+Plug 'moll/vim-bbye'
+Plug 'folke/zen-mode.nvim' " Zen mode
+Plug 'folke/twilight.nvim' " Focus
+Plug 'luukvbaal/stabilize.nvim' " Don't shift windows when opening other panes
+Plug 'hoob3rt/lualine.nvim' " Statusbar
+Plug 'kshenoy/vim-signature' " Marks in gutter
+Plug 'akinsho/toggleterm.nvim' " Better terminal
+Plug 'ryanoasis/vim-devicons' " Icons
+Plug 'kyazdani42/nvim-web-devicons' " Icons
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'} " File browser
+Plug 'lukas-reineke/indent-blankline.nvim' " Indent guides
 
-" Completion icons
-Plug 'onsails/lspkind.nvim'
-
-" Luasnip users.
-Plug 'L3MON4D3/LuaSnip'
-Plug 'honza/vim-snippets'
-Plug 'saadparwaiz1/cmp_luasnip'
-
-Plug 'folke/trouble.nvim'
-Plug 'folke/lsp-colors.nvim'
-Plug 'nvim-lua/lsp-status.nvim'
-Plug 'ray-x/lsp_signature.nvim'
-Plug 'stevearc/dressing.nvim'
-
-" Neorg
-Plug 'nvim-neorg/neorg'
-
-" File browser
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
-
-" Show current context
-Plug 'nvim-treesitter/nvim-treesitter-context'
-
-" Docker Containers
-Plug 'jamestthompson3/nvim-remote-containers'
-
-" Make CSV/TSVs easier to read
+" Colourscheme/highlights
+Plug 'rebelot/kanagawa.nvim'
 Plug 'mechatroner/rainbow_csv'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'folke/todo-comments.nvim' " Todo highlighting
 
-" Targets
+" Navigation
+Plug 'deris/vim-shot-f' 
+Plug 'ggandor/leap.nvim'
 Plug 'wellle/targets.vim'
+
+" Git wrappers
+Plug 'tpope/vim-fugitive' " General wrapper
+Plug 'airblade/vim-gitgutter' " Show changes in gutter
+Plug 'rhysd/git-messenger.vim' " Blame for current line
+Plug 'rhysd/conflict-marker.vim' " Merge conflicts
+Plug 'pwntester/octo.nvim' " GitHub
+Plug 'sindrets/diffview.nvim' " Better diff viewing
+Plug 'akinsho/bufferline.nvim' " Better top bar
 
 " Discord
 Plug 'andweeb/presence.nvim'
@@ -71,20 +82,10 @@ Plug 'andweeb/presence.nvim'
 " Bracket closing
 Plug 'windwp/nvim-autopairs'
 
-" Don't shift windows when opening other panes
-Plug 'luukvbaal/stabilize.nvim'
-
-" better JSX support
-Plug 'maxmellon/vim-jsx-pretty'
-
-" Better terminal
-Plug 'akinsho/toggleterm.nvim'
-
-" Statusbar
-Plug 'hoob3rt/lualine.nvim'
-
-" Venn
-Plug 'jbyuki/venn.nvim'
+" Languages
+Plug 'maxmellon/vim-jsx-pretty' " better JSX support
+Plug 'nvim-neorg/neorg' " Neorg
+Plug 'jbyuki/venn.nvim' " ASCII Diagrams
 
 " ???
 Plug 'alec-gibson/nvim-tetris'
@@ -94,64 +95,13 @@ Plug 'seandewar/nvimesweeper'
 Plug 'tpope/vim-sleuth'
 Plug 'Vimjas/vim-python-pep8-indent'
 
-" Colourschemes
-Plug 'folke/tokyonight.nvim'
-Plug 'marko-cerovac/material.nvim'
-Plug 'sainnhe/sonokai'
-Plug 'rebelot/kanagawa.nvim'
-
-" Highlight F/f/T/t jumps
-Plug 'deris/vim-shot-f' 
-
-" Git wrappers
-Plug 'tpope/vim-fugitive' " General wrapper
-Plug 'airblade/vim-gitgutter' " Show changes in gutter
-Plug 'rhysd/git-messenger.vim' " Blame for current line
-Plug 'rhysd/conflict-marker.vim' " Merge conflicts
-Plug 'pwntester/octo.nvim' " GitHub
-Plug 'sindrets/diffview.nvim' " Better diff viewing
-
 " Commenting shortcuts
 Plug 'preservim/nerdcommenter'
-
-" Start page
-Plug 'goolord/alpha-nvim'
-
-" Don't break layout when closing 
-Plug 'moll/vim-bbye'
-
-" Notifications
-Plug 'rcarriga/nvim-notify'
-
-" Icons
-Plug 'ryanoasis/vim-devicons'
-Plug 'kyazdani42/nvim-web-devicons'
-
-" Better top bar
-Plug 'akinsho/bufferline.nvim'
-
-" Colour code highlighting
-Plug 'norcalli/nvim-colorizer.lua'
-
-" Zen mode
-Plug 'folke/zen-mode.nvim'
-" Focus
-Plug 'folke/twilight.nvim'
-
-" Todo highlighting
-Plug 'nvim-lua/plenary.nvim'
-Plug 'folke/todo-comments.nvim'
 
 " Telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'nvim-telescope/telescope-project.nvim'
-
-" Ron highlighting
-Plug 'ron-rs/ron.vim'
-
-" Indent guides
-Plug 'lukas-reineke/indent-blankline.nvim'
 
 " UNIX Helper
 Plug 'tpope/vim-eunuch'
@@ -159,16 +109,10 @@ Plug 'tpope/vim-eunuch'
 " Tagbar
 Plug 'preservim/tagbar'
 
-" Ale
-Plug 'dense-analysis/ale'
-
-" Marks in gutter
-Plug 'kshenoy/vim-signature'
-
-" Treesitter synax highlighting
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" Treesitter-based navigation
-Plug 'nvim-treesitter/nvim-treesitter-refactor'
+" Treesitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Treesitter synax highlighting
+Plug 'nvim-treesitter/nvim-treesitter-refactor' " Treesitter-based navigation
+Plug 'nvim-treesitter/nvim-treesitter-context' " Show current context
 
 call plug#end()
 
@@ -188,10 +132,6 @@ set inccommand=nosplit
 "
 " Enable mouse support
 set mouse=a
-
-" Window title stuff
-set title
-set titlestring=nvim\ %F
 
 set wildignore +=*/staticfiles/*,*/node_modules/*,*/env/*
 
@@ -269,7 +209,13 @@ vim.cmd("colorscheme kanagawa")
 
 require("lsp-colors").setup()
 require('nvim-autopairs').setup()
-require("noice").setup()
+require("noice").setup({
+  lsp = {
+    signature = {
+      enabled = false
+    }
+  }
+})
 EOF
 
 " colorscheme kanagawa " sonokai " tokyonight
@@ -312,6 +258,8 @@ EOF
 let g:context_enabled = 0
 
 nnoremap <silent><Leader>x :TSContextToggle<CR>
+"
+" -----------------     Leap     -----------------
 lua require('leap').add_default_mappings()
 
 " -----------------   Zen mode   -----------------
@@ -570,79 +518,82 @@ end
 
 -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
-require("nvim-lsp-installer").setup {}
-local lspconfig = require("lspconfig")
-lspconfig.yamlls.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    settings = {
-        yaml = {
-            schemas = {
-                ["https://raw.githubusercontent.com/dob9601/jointhedots/fixup-schema/src/dotfile_schema.json"] = "/jtd.yaml"
-            }
-        }
+
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+require("mason-lspconfig").setup_handlers {
+  function (server_name) -- default handler (optional)
+      require("lspconfig")[server_name].setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+      }
+  end,
+
+  ["yamlls"] = function ()
+    require("lspconfig").yamlls.setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      settings = {
+          yaml = {
+              schemas = {
+                  ["https://raw.githubusercontent.com/dob9601/jointhedots/fixup-schema/src/dotfile_schema.json"] = "/jtd.yaml"
+              }
+          }
+      }
     }
-}
+  end,
 
-lspconfig.tsserver.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-lspconfig.html.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-lspconfig.cssls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
-}
-
-lspconfig.rust_analyzer.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    settings = {
+  ["rust_analyzer"] = function ()
+    require("lspconfig").rust_analyzer.setup {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      settings = {
         ["rust-analyzer"] = {
-            checkOnSave = {
-                command = "clippy"
-            },
-            assist = {
-                importGranularity = "module",
-                importPrefix = "self",
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
+          checkOnSave = {
+            command = "clippy"
+          },
+          assist = {
+            importGranularity = "module",
+            importPrefix = "self",
+          },
+          cargo = {
+            loadOutDirsFromCheck = true
+          },
+          procMacro = {
+            enable = true
+          },
+          diagnostics = {
+            experimental = {
                 enable = true
-            },
-            diagnostics = {
-                experimental = {
-                    enable = true
-                }
             }
+          }
         }
+      }
     }
-}
+  end,
 
-lspconfig.pylsp.setup {
-    on_attach = on_attach,
-    settings = {
+  ["pylsp"] = function () 
+    require("lspconfig").pylsp.setup {
+      on_attach = on_attach,
+      settings = {
         pylsp = {
             plugins = {
                 pycodestyle = { enabled = false },
                 yapf = { enabled = false },
             }
         }
+      }
     }
+  end
 }
 
 require("trouble").setup {
-    auto_open = true,
-    auto_preview = false,
-    auto_close = false,
-    height = 5,
+  auto_open = true,
+  auto_preview = false,
+  auto_close = false,
+  height = 5,
 }
 EOF
 
@@ -650,11 +601,11 @@ EOF
 
 lua << EOF
 require("stabilize").setup({
-    ignore = {
-        filetype = {},
-        buftype = {}
-    },
-    nested = "QuickFixCmdPost,DiagnosticChanged *"
+  ignore = {
+      filetype = {},
+      buftype = {}
+  },
+  nested = "QuickFixCmdPost,DiagnosticChanged *"
 })
 EOF
 
@@ -668,36 +619,36 @@ nnoremap <silent>gB :BufferLineCyclePrev<CR>
 
 lua << EOF
 require("bufferline").setup {
-    options = {
-        diagnostics = "nvim_lsp",
-        separator_style = "slant",
-        always_show_bufferline = true,
-        close_command = "Bdelete %d",
-        offsets = {
-            {filetype = "CHADTree", text = "File Explorer", text_align = "center"}
-        },
-        groups = {
-            options = {
-                toggle_hidden_on_enter = true
-            },
-            items = {
-                {
-                    name = "Tests",
-                    icon = "",
-                    matcher = function(buf)
-                        return buf.filename:match('%_test') or buf.filename:match('%_spec')
-                    end,
-                },
-                {
-                    name = "Dotfiles",
-                    icon = "",
-                    matcher = function(buf)
-                        return buf.filename:sub(1, 1) == '.'
-                    end,
-                }
-            }
-        }
-    },
+  options = {
+      diagnostics = "nvim_lsp",
+      separator_style = "slant",
+      always_show_bufferline = true,
+      close_command = "Bdelete %d",
+      offsets = {
+          {filetype = "CHADTree", text = "File Explorer", text_align = "center"}
+      },
+      groups = {
+          options = {
+              toggle_hidden_on_enter = true
+          },
+          items = {
+              {
+                  name = "Tests",
+                  icon = "",
+                  matcher = function(buf)
+                      return buf.filename:match('%_test') or buf.filename:match('%_spec')
+                  end,
+              },
+              {
+                  name = "Dotfiles",
+                  icon = "",
+                  matcher = function(buf)
+                      return buf.filename:sub(1, 1) == '.'
+                  end,
+              }
+          }
+      }
+  },
 }
 EOF
 
@@ -708,8 +659,8 @@ lua << EOF
 local notify = require("notify")
 
 notify.setup({
-  max_width = 100,
-  top_down = false,
+max_width = 100,
+top_down = false,
 })
 
 local spinner_frames = { "◜", "◠", "◝", "◞", "◡", "◟" }
@@ -721,9 +672,9 @@ autocmd BufEnter * if (winnr("$") == 1 && &filetype == "CHADTree") | q | endif
 
 lua << EOF
 local chadtree_settings = {
-    theme = {
-        text_colour_set = "nerdtree_syntax_dark"
-    }
+  theme = {
+      text_colour_set = "nerdtree_syntax_dark"
+  }
 }
 vim.api.nvim_set_var("chadtree_settings", chadtree_settings)
 EOF
@@ -731,36 +682,36 @@ EOF
 " -------------------- Discord ---------------------
 lua << EOF
 require("presence"):setup({
-    buttons = {
-        { label = "GitHub Profile", url = "https://github.com/dob9601" },
-        { label = "jointhedots", url = "https://github.com/dob9601/jointhedots" },
-    },
+  buttons = {
+      { label = "GitHub Profile", url = "https://github.com/dob9601" },
+      { label = "jointhedots", url = "https://github.com/dob9601/jointhedots" },
+  },
 })
 EOF
 " ---------------------- Venn ----------------------
 
 lua << EOF
- -- venn.nvim: enable or disable keymappings
+-- venn.nvim: enable or disable keymappings
 function toggle_venn()
-    local venn_enabled = vim.inspect(vim.b.venn_enabled)
-    if venn_enabled == "nil" then
-        vim.b.venn_enabled = true
-        vim.cmd[[setlocal ve=all]]
-	vim.cmd[[IndentBlanklineDisable]]
-        -- draw a line on HJKL keystokes
-        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "i", "<S-r>", {noremap = true})
-        -- draw a box by pressing "f" with visual selection
-        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
-    else
-	vim.cmd[[IndentBlanklineEnable]]
-        vim.cmd[[setlocal ve=]]
-        vim.cmd[[mapclear <buffer>]]
-        vim.b.venn_enabled = nil
-    end
+  local venn_enabled = vim.inspect(vim.b.venn_enabled)
+  if venn_enabled == "nil" then
+      vim.b.venn_enabled = true
+      vim.cmd[[setlocal ve=all]]
+      vim.cmd[[IndentBlanklineDisable]]
+      -- draw a line on HJKL keystokes
+      vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+      vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+      vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+      vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+      vim.api.nvim_buf_set_keymap(0, "n", "i", "<S-r>", {noremap = true})
+      -- draw a box by pressing "f" with visual selection
+      vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+  else
+      vim.cmd[[IndentBlanklineEnable]]
+      vim.cmd[[setlocal ve=]]
+      vim.cmd[[mapclear <buffer>]]
+      vim.b.venn_enabled = nil
+  end
 end
 -- toggle keymappings for venn using <leader>v
 vim.api.nvim_set_keymap('n', '<leader>v', ":lua toggle_venn()<CR>", { noremap = true, silent = true })
@@ -809,41 +760,41 @@ local dashboard = require("alpha.themes.dashboard")
 
 -- Set header
 dashboard.section.header.val = {
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⢦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
-    "⠀⠀⠀⣴⢟⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⢛⣷⣎⡠⡀⠛⢤⣠⣼⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⡿⣦⡀", 
-    "⠀⠀⠀⣿⠀⠌⡨⠈⠌⡈⠌⡈⠌⡈⠌⠨⠠⣹⣗⠜⡌⡒⡄⢹⡷⠀⠅⢊⠈⠌⠄⠅⠡⠡⠨⢈⢐⡸⣿⡇", 
-    "⠀⠀⠀⠻⣷⣽⠊⠨⠐⠠⠁⠔⢐⠠⢱⢹⣼⣿⡣⢣⢑⠕⡜⢜⢿⣮⠝⢸⠨⠠⠡⢈⢂⠡⠨⢠⢺⣼⠟⠁", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠠⢁⢂⢸⢸⣿⡪⡘⡌⢆⠇⡎⣺⠞⠁⡀⡂⠌⠄⠅⢂⢐⡠⣏⣷⠟⠁⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠐⡐⠠⢸⢸⣿⡪⡘⡌⢎⣼⠞⠁⡀⡐⡀⡂⠌⠄⠅⡢⣲⣵⠟⠁⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢐⠠⠡⢸⢸⣿⡪⢌⣮⠞⠁⢀⢐⢀⢂⢐⠐⡈⢄⢕⣼⢿⡁⠀⠀⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢀⠂⡡⠸⣸⣿⣾⠟⠁⠀⠌⠠⢂⠐⡀⡂⢔⢔⣵⡟⢇⢄⠱⢆⡀⠀⠀⠀⠀", 
-    "⠀⠀⠀⡠⠊⣿⠀⠨⢈⠌⠨⢀⠂⡂⢜⢺⠟⠁⢀⠂⡡⠁⠅⡂⠌⣀⢖⣵⣟⢗⠱⡑⡜⢔⢄⠙⣤⠀⠀⠀", 
-    "⠀⡠⠊⡰⡨⣿⠀⠨⠠⠈⠌⡐⢐⠐⢸⠄⡀⢂⠂⡂⢂⢁⠂⡂⣦⣳⡿⢝⢌⢆⢣⢱⠸⡐⡅⢇⢄⠙⢆⡀", 
-    "⠈⠛⣵⡪⡌⣿⠀⠨⠐⡁⠅⡐⢐⠈⠌⡀⡂⢂⠂⡂⢂⠐⡜⣵⣟⢏⢎⠪⡢⡑⡕⢌⠎⡜⢌⢪⡲⡯⠋⠀", 
-    "⠀⠀⠀⠻⢮⣿⠀⠨⠐⡐⢐⠐⡐⠨⠐⡀⡂⢂⠂⣢⡞⠩⢉⡯⢢⠱⡘⡌⢆⢣⢊⢎⢪⢸⢜⡯⠋⠀⠀⠀", 
-    "⠀⠀⠀⠀⠈⣿⠀⠨⠐⡐⢐⠐⠠⠡⠨⢀⠂⡂⣒⣼⣶⢷⢞⢎⠪⣊⢪⠸⡨⡢⠣⣊⡶⡻⠋⠀⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠐⡐⢈⠌⠄⠅⠂⣆⣿⣛⠛⡛⣻⡪⣟⡛⠛⡛⣼⡜⢛⠛⠻⣯⠞⢛⢛⢳⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⢀⠂⡂⠂⠄⢅⡸⣪⣾⢫⠇⡂⢂⡟⡌⡎⡐⢡⢴⢤⡌⠄⠌⡦⠦⡬⢐⠀⡾⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⠐⡐⠠⠡⢥⣪⣾⢻⠨⡞⡐⠠⡽⡘⣼⠁⡂⣝⣞⣽⠃⠌⣸⠀⢠⢃⠂⢼⠁⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠠⡡⣣⡿⠻⢵⡱⣽⢀⢂⣹⡏⣪⠏⡐⢸⡿⠋⡟⠨⢰⡇⠀⡾⠐⣈⣎⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⠙⠷⠿⠿⠷⠿⠋⠀⠀⠈⠹⣷⡶⡶⡶⡯⢺⡶⡶⠓⠃⠘⠚⠒⠓⠃⠀⠓⠓⠒⠚⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⣧⢣⢞⣽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
-    "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠹⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⢦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+  "⠀⠀⠀⣴⢟⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⢛⣷⣎⡠⡀⠛⢤⣠⣼⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⡿⣦⡀", 
+  "⠀⠀⠀⣿⠀⠌⡨⠈⠌⡈⠌⡈⠌⡈⠌⠨⠠⣹⣗⠜⡌⡒⡄⢹⡷⠀⠅⢊⠈⠌⠄⠅⠡⠡⠨⢈⢐⡸⣿⡇", 
+  "⠀⠀⠀⠻⣷⣽⠊⠨⠐⠠⠁⠔⢐⠠⢱⢹⣼⣿⡣⢣⢑⠕⡜⢜⢿⣮⠝⢸⠨⠠⠡⢈⢂⠡⠨⢠⢺⣼⠟⠁", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠠⢁⢂⢸⢸⣿⡪⡘⡌⢆⠇⡎⣺⠞⠁⡀⡂⠌⠄⠅⢂⢐⡠⣏⣷⠟⠁⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⠐⡐⠠⢸⢸⣿⡪⡘⡌⢎⣼⠞⠁⡀⡐⡀⡂⠌⠄⠅⡢⣲⣵⠟⠁⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢐⠠⠡⢸⢸⣿⡪⢌⣮⠞⠁⢀⢐⢀⢂⢐⠐⡈⢄⢕⣼⢿⡁⠀⠀⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⠈⠌⠨⢀⠂⡡⠸⣸⣿⣾⠟⠁⠀⠌⠠⢂⠐⡀⡂⢔⢔⣵⡟⢇⢄⠱⢆⡀⠀⠀⠀⠀", 
+  "⠀⠀⠀⡠⠊⣿⠀⠨⢈⠌⠨⢀⠂⡂⢜⢺⠟⠁⢀⠂⡡⠁⠅⡂⠌⣀⢖⣵⣟⢗⠱⡑⡜⢔⢄⠙⣤⠀⠀⠀", 
+  "⠀⡠⠊⡰⡨⣿⠀⠨⠠⠈⠌⡐⢐⠐⢸⠄⡀⢂⠂⡂⢂⢁⠂⡂⣦⣳⡿⢝⢌⢆⢣⢱⠸⡐⡅⢇⢄⠙⢆⡀", 
+  "⠈⠛⣵⡪⡌⣿⠀⠨⠐⡁⠅⡐⢐⠈⠌⡀⡂⢂⠂⡂⢂⠐⡜⣵⣟⢏⢎⠪⡢⡑⡕⢌⠎⡜⢌⢪⡲⡯⠋⠀", 
+  "⠀⠀⠀⠻⢮⣿⠀⠨⠐⡐⢐⠐⡐⠨⠐⡀⡂⢂⠂⣢⡞⠩⢉⡯⢢⠱⡘⡌⢆⢣⢊⢎⢪⢸⢜⡯⠋⠀⠀⠀", 
+  "⠀⠀⠀⠀⠈⣿⠀⠨⠐⡐⢐⠐⠠⠡⠨⢀⠂⡂⣒⣼⣶⢷⢞⢎⠪⣊⢪⠸⡨⡢⠣⣊⡶⡻⠋⠀⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠐⡐⢈⠌⠄⠅⠂⣆⣿⣛⠛⡛⣻⡪⣟⡛⠛⡛⣼⡜⢛⠛⠻⣯⠞⢛⢛⢳⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⢀⠂⡂⠂⠄⢅⡸⣪⣾⢫⠇⡂⢂⡟⡌⡎⡐⢡⢴⢤⡌⠄⠌⡦⠦⡬⢐⠀⡾⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⠐⡐⠠⠡⢥⣪⣾⢻⠨⡞⡐⠠⡽⡘⣼⠁⡂⣝⣞⣽⠃⠌⣸⠀⢠⢃⠂⢼⠁⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⣿⠀⠨⢐⠠⡡⣣⡿⠻⢵⡱⣽⢀⢂⣹⡏⣪⠏⡐⢸⡿⠋⡟⠨⢰⡇⠀⡾⠐⣈⣎⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⠙⠷⠿⠿⠷⠿⠋⠀⠀⠈⠹⣷⡶⡶⡶⡯⢺⡶⡶⠓⠃⠘⠚⠒⠓⠃⠀⠓⠓⠒⠚⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⣧⢣⢞⣽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
+  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠹⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀", 
 }
 
 -- Set menu
 dashboard.section.buttons.val = {
-    dashboard.button( "e", "  New File" , ":ene <BAR> startinsert <CR>"),
-    dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
-    dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
-    dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
-    dashboard.button( "t", "  Terminal" , ":terminal<CR>"),
-    dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
-    dashboard.button( "n", "ﴬ  Notes" , ":Neorg workspace home<CR>"),
-    dashboard.button( "b", "  Browse Files" , ":Telescope file_browser<cr>"),
-    dashboard.button( "p", "ﴬ  Projects" , ":Telescope project<cr>"),
-    dashboard.button( "c", "  Config" , ":e $MYVIMRC<CR>"),
-    dashboard.button( "q", "  Quit", ":qa<CR>"),
+  dashboard.button( "e", "  New File" , ":ene <BAR> startinsert <CR>"),
+  dashboard.button( "f", "  Find Files", ":Telescope find_files<CR>"),
+  dashboard.button( "g", "  Grep Files", ":Telescope live_grep<CR>"),
+  dashboard.button( "r", "  Recent Files"   , ":Telescope oldfiles<CR>"),
+  dashboard.button( "t", "  Terminal" , ":terminal<CR>"),
+  dashboard.button( "u", "ﮮ  Update Plugins" , ":PlugUpdate<CR>"),
+  dashboard.button( "n", "ﴬ  Notes" , ":Neorg workspace home<CR>"),
+  dashboard.button( "b", "  Browse Files" , ":Telescope file_browser<cr>"),
+  dashboard.button( "p", "ﴬ  Projects" , ":Telescope project<cr>"),
+  dashboard.button( "c", "  Config" , ":e $MYVIMRC<CR>"),
+  dashboard.button( "q", "  Quit", ":qa<CR>"),
 }
 
 local fortune = require("alpha.fortune") 
@@ -861,24 +812,24 @@ let g:ale_cursor_detail=1
 let g:ale_floating_preview = 1
 let g:ale_floating_window_border = ['│', '─', '┌', '┐', '┘', '└']
 let g:ale_linters = {
-    \ 'python': [],
-    \ 'haskell': [],
-    \ 'rust': [],
-    \ 'typescript': [],
-    \ 'typescriptreact': [],
-    \ 'javascript': [],
-    \ 'javascriptreact': []
-    \}
+  \ 'python': [],
+  \ 'haskell': [],
+  \ 'rust': [],
+  \ 'typescript': [],
+  \ 'typescriptreact': [],
+  \ 'javascript': [],
+  \ 'javascriptreact': []
+  \}
 
 "------------------ Indent Line ----------------- 
 
 lua << EOF
 require("indent_blankline").setup {
-    space_char_blankline = " ",
-    show_current_context = true,
-    show_current_context_start = true,
-    filetype_exclude = {"alpha"},
-    char = "▏"
+  space_char_blankline = " ",
+  show_current_context = true,
+  show_current_context_start = true,
+  filetype_exclude = {"alpha"},
+  char = "▏"
 }
 EOF
 
@@ -896,8 +847,8 @@ local trouble = require("trouble.providers.telescope")
 local custom_actions = {}
 
 function custom_actions.send_selected_to_qflist(prompt_bufnr)
-    actions.send_selected_to_qflist(prompt_bufnr)
-    actions.open_qflist()
+  actions.send_selected_to_qflist(prompt_bufnr)
+  actions.open_qflist()
 end
 
 require('telescope').setup {
