@@ -16,6 +16,7 @@ Plug 'nvim-lua/plenary.nvim' " Misc lua utils
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'williamboman/mason.nvim'
+Plug 'jayp0521/mason-null-ls.nvim'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'onsails/lspkind.nvim'
 Plug 'L3MON4D3/LuaSnip'
@@ -588,6 +589,22 @@ require("mason-lspconfig").setup_handlers {
     }
   end
 }
+
+local null_ls = require('null-ls')
+require('mason-null-ls').setup({
+  automatic_setup = true
+})
+
+require('mason-null-ls').setup_handlers {
+    function(source_name, methods)
+      require 'mason-null-ls'.setup_handlers()
+    end,
+    stylua = function(source_name, methods)
+      null_ls.register(null_ls.builtins.formatting.stylua)
+    end,
+}
+
+null_ls.setup()
 
 require("trouble").setup {
   auto_open = true,
