@@ -42,7 +42,7 @@ vim.opt.cursorline = true
 -- Make vim feel faster
 vim.opt.updatetime = 50
 
-vim.opt.shortmess = vim.opt.shortmess + "A"
+vim.opt.shortmess = vim.opt.shortmess + "As"
 
 vim.opt.laststatus = 3
 

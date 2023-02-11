@@ -94,3 +94,10 @@ require("mason-lspconfig").setup_handlers({
         })
     end,
 })
+
+require("mason-null-ls").setup({
+    automatic_setup = true,
+})
+
+require("null-ls").setup()
+require("mason-null-ls").setup_handlers()
