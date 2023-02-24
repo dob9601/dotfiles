@@ -10,6 +10,8 @@ return require("packer").startup(function(use)
 	use({
 		"williamboman/mason.nvim",
 		requires = {
+			"mfussenegger/nvim-dap",
+			"jay-babu/mason-nvim-dap.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"lvimuser/lsp-inlayhints.nvim",
 			"jose-elias-alvarez/null-ls.nvim",
@@ -55,7 +57,20 @@ return require("packer").startup(function(use)
 		"glepnir/lspsaga.nvim",
 		branch = "main",
 		config = function()
-			require("lspsaga").setup()
+			require("lspsaga").setup({
+				ui = {
+					border = "rounded",
+					expand = "",
+					collapse = "",
+					preview = " ",
+					code_action = "",
+					diagnostic = " ",
+					incoming = " ",
+					outgoing = " ",
+					hover = " ",
+					kind = {},
+				},
+			})
 		end,
 		requires = { { "nvim-tree/nvim-web-devicons" } },
 	})
@@ -102,37 +117,9 @@ return require("packer").startup(function(use)
 				timeout = 3,
 			})
 		end,
+		after = { "noice.nvim" },
 	})
 
-	-- Packer
-	use({
-		"folke/noice.nvim",
-		config = function()
-			require("noice").setup({
-				views = {
-					cmdline_popup = {
-						border = {
-							style = "none",
-							padding = { 1, 1 },
-						},
-						filter_options = {},
-						win_options = {
-							winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
-						},
-					},
-				},
-				presets = {
-					bottom_search = true,
-					command_palette = true,
-					long_message_to_split = true,
-				},
-			})
-		end,
-		requires = {
-			"MunifTanjim/nui.nvim",
-		},
-		after = { "nvim-notify" },
-	})
 	use({
 		"goolord/alpha-nvim",
 		config = function()
@@ -199,7 +186,6 @@ return require("packer").startup(function(use)
 		config = function()
 			require("dob9601.config.lualine")
 		end,
-		after = { "noice.nvim" },
 	})
 	-- Marks in gutter
 	use({
@@ -299,16 +285,22 @@ return require("packer").startup(function(use)
 	use({
 		"akinsho/bufferline.nvim",
 		config = function()
+			vim.cmd([[
+                highlight! link BufferLineIndicatorSelected @exception
+            ]])
 			require("bufferline").setup({
 				options = {
 					diagnostics = "nvim_lsp",
-					separator_style = "slant",
+					separator_style = "thin",
 					always_show_bufferline = true,
 					close_command = "Bdelete %d",
 					groups = {
 						options = {
 							toggle_hidden_on_enter = true,
 						},
+					},
+					indicator = {
+						style = "icon",
 					},
 				},
 			})
@@ -340,7 +332,8 @@ return require("packer").startup(function(use)
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope-project.nvim",
 			"nvim-telescope/telescope-file-browser.nvim",
-			"LinArcX/telescope-command-palette.nvim",
+			"nvim-telescope/telescope-ui-select.nvim",
+			"FeiyouG/command_center.nvim",
 		},
 		config = function()
 			require("dob9601.config.telescope")
@@ -364,11 +357,42 @@ return require("packer").startup(function(use)
 		end,
 	})
 
+	use({
+		"folke/noice.nvim",
+		config = function()
+			require("noice").setup({
+				lsp = {
+					-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+					override = {
+						["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+						["vim.lsp.util.stylize_markdown"] = true,
+						["cmp.entry.get_documentation"] = true,
+					},
+				},
+				-- you can enable a preset for easier configuration
+				presets = {
+					bottom_search = true, -- use a classic bottom cmdline for search
+					command_palette = true, -- position the cmdline and popupmenu together
+					long_message_to_split = true, -- long messages will be sent to a split
+					inc_rename = false, -- enables an input dialog for inc-rename.nvim
+					lsp_doc_border = false, -- add a border to hover docs and signature help
+				},
+				messages = {
+					enabled = true,
+					-- view_error = "mini",
+				},
+			})
+		end,
+		requires = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+		},
+	})
+
 	-- Treesitter
 	use({
 		"nvim-treesitter/nvim-treesitter",
 		requires = {
-			"nvim-treesitter/nvim-treesitter-context",
 			"nvim-treesitter/nvim-treesitter-refactor",
 		},
 		run = ":TSUpdate",
