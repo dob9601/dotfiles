@@ -1,12 +1,12 @@
-theme = "monokai_pro"
+theme = "kanabetter"
 
 [editor]
 line-number = "relative"
 auto-save = true
 bufferline = "multiple"
 cursorline = true
-idle-timeout = 50
-completion-trigger-len = 1
+idle-timeout = 100
+# completion-trigger-len = 1
 
 [editor.statusline]
 right = ["spinner", "file-encoding", "position", "position-percentage"]
@@ -29,8 +29,9 @@ D = ["ensure_selections_forward", "extend_to_line_end", "delete_selection"]
 C-s = ":w"
 0 = "goto_line_start"
 "$" = "goto_line_end"
-S = [ "extend_to_line_bounds", "trim_selections", "change_selection" ]
 
 [keys.insert]
 C-s = ":w"
 C-space = "completion"
+A-n = "select_next_sibling"
+A-p = "select_prev_sibling"
