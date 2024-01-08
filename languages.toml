@@ -1,0 +1,64 @@
+[[language]]
+name = "json"
+indent = { tab-width = 4, unit = " " }
+
+[[language]]
+name = "tsx"
+auto-format = true
+
+language-servers = [
+  "typescript-language-server",
+  { name = "eslint", except-features = ["format"] },
+  "tailwind"
+]
+formatter = { command = 'prettier', args = ["--parser", "typescript"] }
+
+
+[[language]]
+name = "typescript"
+auto-format = true
+formatter = { command = 'prettier', args = ["--parser", "typescript"] }
+language-servers = [
+  "typescript-language-server",
+  { name = "eslint", except-features = ["format"] },
+]
+
+[language-server.typescript-language-server.config.format]
+convertTabsToSpaces = true
+indentSize = 4
+tabSize = 4
+
+[language-server.typescript-language-server.config.inlayHints]
+includeInlayEnumMemberValueHints = true
+includeInlayFunctionLikeReturnTypeHints = true
+includeInlayFunctionParameterTypeHints = true
+includeInlayParameterNameHints = "all"
+includeInlayParameterNameHintsWhenArgumentMatchesName = true
+includeInlayPropertyDeclarationTypeHints = true
+includeInlayVariableTypeHints = true
+includeInlayVariableTypeHintsWhenTypeMatchesName = true
+
+[language-server.eslint]
+command = "vscode-eslint-language-server"
+args = ["--stdio", "-vvv"]
+
+[language-server.eslint.config]
+format = true
+nodePath = ""
+onIgnoredFiles = "off"
+packageManager = "yarn"
+quiet = false
+rulesCustomizations = []
+run = "onType"
+useESLintClass = false
+validate = "on"
+codeAction = { disableRuleComment = { enable = true, location = "separateLine" }, showDocumentation = { enable = true } }
+codeActionOnSave = { mode = "all" }
+experimental = { }
+problems = { shortenToSingleLine = false }
+workingDirectory = { mode = "auto" }
+
+[language-server.tailwind]
+command = "tailwindcss-language-server"
+args = ["--stdio"]
+roots = ["tailwind.config.ts"]
