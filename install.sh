@@ -15,3 +15,6 @@ tar -xvf /tmp/helix.tar.xz -C /tmp/helix --strip-components=1
 mv /tmp/helix/runtime $HELIX_CONFIG_DIR/runtime
 mv /tmp/helix /usr/local/bin/hx
 #################################################
+
+mv ./helix/config.toml $HELIX_CONFIG_DIR
+mv ./helix/languages.toml $HELIX_CONFIG_DIR
