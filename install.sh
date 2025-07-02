@@ -10,6 +10,7 @@ curl -sL -o /tmp/helix.tar.xz https://github.com/helix-editor/helix/releases/dow
 
 mkdir -p $HELIX_CONFIG_DIR
 
+mkdir /tmp/helix
 tar -xvf /tmp/helix.tar.xz -C /tmp/helix --strip-components=1
 
 mv /tmp/helix/runtime $HELIX_CONFIG_DIR/runtime
