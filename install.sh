@@ -15,7 +15,15 @@ tar -xvf /tmp/helix.tar.xz -C /tmp/helix --strip-components=1
 
 mv /tmp/helix/runtime $HELIX_CONFIG_DIR/runtime
 mv /tmp/helix /usr/local/bin/hx
-#################################################
 
-mv ./helix/config.toml $HELIX_CONFIG_DIR
-mv ./helix/languages.toml $HELIX_CONFIG_DIR
+ln -s ./helix/config.toml $HELIX_CONFIG_DIR
+ln -s ./helix/languages.toml $HELIX_CONFIG_DIR
+
+
+################## INSTALL ZSH ##################
+if [ "$SHELL" != "/usr/bin/zsh" ]; then
+    sudo apt install -y zsh
+    exec zsh -il
+fi;
+
+ln -s ./.zshrc "$HOME/.zshrc" 
