@@ -23,6 +23,9 @@ export HELIX_CONFIG_DIR="$HOME/.config/helix"
 ################## INSTALL ZSH ##################
 if [ "$SHELL" != "/usr/bin/zsh" ]; then
     sudo apt install -y zsh
+    
+    CHSH="yes" RUNZSH="no" KEEP_ZSHRC="no" sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    
     exec zsh -il
 fi;
 
