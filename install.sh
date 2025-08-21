@@ -23,10 +23,14 @@ export HELIX_CONFIG_DIR="$HOME/.config/helix"
 ################## INSTALL ZSH ##################
 if [ "$SHELL" != "/usr/bin/zsh" ]; then
     sudo apt install -y zsh
-    
-    CHSH="yes" RUNZSH="no" KEEP_ZSHRC="no" sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    
-    exec zsh -il
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    chsh -s $(which zsh)
 fi;
 
 ln -s ./.zshrc "$HOME/.zshrc"
+
+
+################## GIT ##################
+
+git config --global user.name "Dan O'Brien"
+git config --global user.email "dob9601@github.com"
