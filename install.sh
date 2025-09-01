@@ -2,7 +2,7 @@
 
 set -eux -o pipefail
 
-################# INSTALL HELIX #################
+# Helix
 # export HELIX_VERSION="25.01.1"
 # export HELIX_CONFIG_DIR="$HOME/.config/helix"
 
@@ -19,9 +19,11 @@ set -eux -o pipefail
 # ln -s ./helix/config.toml $HELIX_CONFIG_DIR
 # ln -s ./helix/languages.toml $HELIX_CONFIG_DIR
 
-
-################## INSTALL ZSH ##################
+# Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 chsh -s $(which zsh)
 
 ln -s ./.zshrc "$HOME/.zshrc"
+
+# Git
+ln -s ./.gitconfig "$HOME/.gitconfig"
