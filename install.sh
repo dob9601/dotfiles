@@ -20,7 +20,7 @@ set -eux -o pipefail
 # ln -s ./helix/languages.toml $HELIX_CONFIG_DIR
 
 # Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 chsh -s $(which zsh)
 
 ln -s ./.zshrc "$HOME/.zshrc"
