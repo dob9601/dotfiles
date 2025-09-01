@@ -2,10 +2,10 @@
 
 set -eux -o pipefail
 
-export HELIX_VERSION="25.01.1"
-export HELIX_CONFIG_DIR="$HOME/.config/helix"
-
 ################# INSTALL HELIX #################
+# export HELIX_VERSION="25.01.1"
+# export HELIX_CONFIG_DIR="$HOME/.config/helix"
+
 # curl -sL -o /tmp/helix.tar.xz https://github.com/helix-editor/helix/releases/download/${HELIX_VERSION}/helix-${HELIX_VERSION}-x86_64-linux.tar.xz
 
 # mkdir -p $HELIX_CONFIG_DIR
@@ -21,12 +21,7 @@ export HELIX_CONFIG_DIR="$HOME/.config/helix"
 
 
 ################## INSTALL ZSH ##################
-if [ "$SHELL" != "/usr/bin/zsh" ]; then
-    sudo apt install -y zsh
-    
-    CHSH="yes" RUNZSH="no" KEEP_ZSHRC="no" sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    
-    exec zsh -il
-fi;
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+chsh -s $(which zsh)
 
 ln -s ./.zshrc "$HOME/.zshrc"
