@@ -21,7 +21,7 @@ set -eux -o pipefail
 
 # Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-chsh -s $(which zsh)
+sudo chsh -s $(which zsh) $(whoami)
 
 ln -s ./.zshrc "$HOME/.zshrc"
 
