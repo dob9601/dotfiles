@@ -9,7 +9,7 @@ rm -f ~/.zshrc
 ln -s ./.zshrc "$HOME/.zshrc"
 
 ## Oh My Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --noreplace-rc
 sudo chsh -s "$(which zsh)" "$(whoami)"
 
 ## Starship
