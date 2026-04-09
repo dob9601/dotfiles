@@ -5,7 +5,7 @@ set -eux -o pipefail
 mkdir -p "$HOME/.config"
 
 # Zsh
-rm ~/.zshrc
+rm -f ~/.zshrc
 ln -s ./.zshrc "$HOME/.zshrc"
 
 ## Oh My Zsh
