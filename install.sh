@@ -3,6 +3,7 @@
 set -eux -o pipefail
 
 mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.local/bin"
 
 # Zsh
 ## Oh My Zsh
@@ -13,7 +14,7 @@ rm -f "$HOME/.zshrc"
 ln -s .dotfiles/.zshrc "$HOME/.zshrc"
 
 ## Starship
-curl -sS https://starship.rs/install.sh | sh -s -- --yes -b ~/.local/bin
+curl -sS https://starship.rs/install.sh | sh -s -- --yes --bin-dir ~/.local/bin
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 # Git
