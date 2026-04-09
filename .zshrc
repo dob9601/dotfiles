@@ -2,6 +2,7 @@ alias grep='grep --color=auto'
 alias ls='ls --color=auto'
 
 export ZSH="$HOME/.oh-my-zsh"
+export PATH="$HOME/.local/bin:$PATH"
 
 plugins=(git)
 

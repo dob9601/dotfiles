@@ -13,7 +13,7 @@ rm -f "$HOME/.zshrc"
 ln -s .dotfiles/.zshrc "$HOME/.zshrc"
 
 ## Starship
-curl -sS https://starship.rs/install.sh | sh -s -- --yes
+curl -sS https://starship.rs/install.sh | sh -s -- --yes -b ~/.local/bin
 starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 # Git
