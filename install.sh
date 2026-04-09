@@ -5,12 +5,12 @@ set -eux -o pipefail
 mkdir -p "$HOME/.config"
 
 # Zsh
+## Oh My Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended 
+sudo chsh -s "$(which zsh)" "$(whoami)"
+
 rm -f ~/.zshrc
 ln -s ./.zshrc "$HOME/.zshrc"
-
-## Oh My Zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --noreplace-rc
-sudo chsh -s "$(which zsh)" "$(whoami)"
 
 ## Starship
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
