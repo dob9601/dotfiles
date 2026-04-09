@@ -9,8 +9,8 @@ mkdir -p "$HOME/.config"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended 
 sudo chsh -s "$(which zsh)" "$(whoami)"
 
-rm -f ~/.zshrc
-ln -s ./.zshrc "$HOME/.zshrc"
+rm -f "$HOME/.zshrc"
+ln -s .dotfiles/.zshrc "$HOME/.zshrc"
 
 ## Starship
 curl -sS https://starship.rs/install.sh | sh -s -- --yes
