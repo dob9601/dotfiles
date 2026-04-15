@@ -13,8 +13,10 @@ sudo chsh -s "$(which zsh)" "$(whoami)"
 rm -f "$HOME/.zshrc"
 ln -s .dotfiles/.zshrc "$HOME/.zshrc"
 
-git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git "$ZSH_CUSTOM/plugins/zsh-autocomplete"
+source "$HOME/.zshrc"
+
+git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autocomplete"
 
 ## Starship
 curl -sS https://starship.rs/install.sh | sh -s -- --yes --bin-dir ~/.local/bin
