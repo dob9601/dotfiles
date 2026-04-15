@@ -13,8 +13,6 @@ sudo chsh -s "$(which zsh)" "$(whoami)"
 rm -f "$HOME/.zshrc"
 ln -s .dotfiles/.zshrc "$HOME/.zshrc"
 
-source "$HOME/.zshrc"
-
 git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
 git clone --depth 1 -- https://github.com/marlonrichert/zsh-autocomplete.git "$HOME/.oh-my-zsh/custom/plugins/zsh-autocomplete"
 
