@@ -7,7 +7,6 @@ export PATH="$HOME/.local/bin:$PATH"
 plugins=(
     git
     zsh-autosuggestions
-    zsh-autocomplete
 )
 
 source $ZSH/oh-my-zsh.sh
