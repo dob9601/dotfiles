@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+SESSION="cluster_nodes"
+
+mapfile -t node_hostnames < <(
+    sed -nE 's/^\s*hostname\s*=\s*(.*)$/\1/p' /data/user/common/cluster.conf
+)
+
+tmux new-session -d -s "$SESSION"
+
+tmux send-keys -t "$SESSION" "ssh -p122 ${node_hostnames[0]}" C-m
+
+for hostname in "${node_hostnames[@]:1}"; do
+    tmux split-window -t "$SESSION" "ssh -p122 $hostname"
+    tmux select-layout -t "$SESSION" tiled
+done
+
+
+tmux attach-session -t "$SESSION"
