@@ -17,7 +17,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/cus
 
 ## Starship
 curl -sS https://starship.rs/install.sh | sh -s -- --yes --bin-dir ~/.local/bin
-starship preset gruvbox-rainbow -o ~/.config/starship.toml
+starship preset gruvbox-rainbow -o "$HOME/.config/starship.toml"
 
 # Git
 git config --global user.name "Dan O'Brien"
